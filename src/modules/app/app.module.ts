@@ -3,6 +3,7 @@ import configuration from '@config/configuration';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AppController } from './app.controller';
       load: [configuration],
       isGlobal: true,
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [],
