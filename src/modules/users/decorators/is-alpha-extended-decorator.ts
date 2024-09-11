@@ -1,5 +1,5 @@
-import { ErrorMessages } from '@/common/errorMessages';
-import { RegularExpressions } from '@/common/regularExpressions';
+import { ErrorMessages } from '@/common/error-messages';
+import { RegularExpressions } from '@/common/regular-expressions';
 import { Injectable } from '@nestjs/common';
 import {
   registerDecorator,

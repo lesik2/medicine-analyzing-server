@@ -3,8 +3,8 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { User } from './models/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { IsUserAlreadyExistConstraint } from './decorators/isUserAlreadyExist';
-import { IsAlphaExtendedConstraint } from './decorators/IsAlphaExtended';
+import { IsUserAlreadyExistConstraint } from './decorators/is-user-already-exist-decorator';
+import { IsAlphaExtendedConstraint } from './decorators/is-alpha-extended-decorator';
 
 @Module({
   controllers: [UsersController],
@@ -14,5 +14,6 @@ import { IsAlphaExtendedConstraint } from './decorators/IsAlphaExtended';
     IsAlphaExtendedConstraint,
   ],
   imports: [TypeOrmModule.forFeature([User])],
+  exports: [UsersService],
 })
 export class UsersModule {}

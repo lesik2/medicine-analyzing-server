@@ -6,7 +6,7 @@ import {
 } from 'class-validator';
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users.service';
-import { ErrorMessages } from '@/common/errorMessages';
+import { ErrorMessages } from '@/common/error-messages';
 
 @ValidatorConstraint({ async: true })
 @Injectable()

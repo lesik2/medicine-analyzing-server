@@ -5,8 +5,8 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { IsUserAlreadyExist } from '../decorators/isUserAlreadyExist';
-import { IsAlphaExtended } from '../decorators/IsAlphaExtended';
+import { IsUserAlreadyExist } from '../decorators/is-user-already-exist-decorator';
+import { IsAlphaExtended } from '../decorators/is-alpha-extended-decorator';
 
 export class CreateUserDto {
   @IsString()
@@ -27,6 +27,7 @@ export class CreateUserDto {
     minLowercase: 1,
     minUppercase: 1,
     minSymbols: 1,
+    minNumbers: 0,
   })
   password: string;
 }
