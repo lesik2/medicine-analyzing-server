@@ -35,10 +35,10 @@ export class UsersService {
 
   async create(requestUser: CreateUserDto): Promise<ExcludeUserPassword> {
     const user = this.usersRepository.create({
-      firstName: requestUser.firstName,
-      lastName: requestUser.lastName,
       email: requestUser.email,
       password: await this.encryptData(requestUser.password),
+      name: requestUser.name,
+      surname: requestUser.surname,
     });
 
     const savedUser = await this.usersRepository.save(user);

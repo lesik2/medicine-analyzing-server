@@ -1,6 +1,5 @@
 import {
   IsEmail,
-  IsString,
   IsStrongPassword,
   MaxLength,
   MinLength,
@@ -9,20 +8,19 @@ import { IsUserAlreadyExist } from '../decorators/is-user-already-exist-decorato
 import { IsAlphaExtended } from '../decorators/is-alpha-extended-decorator';
 
 export class CreateUserDto {
-  @IsString()
   @IsAlphaExtended()
-  firstName: string;
+  name: string;
 
-  @IsString()
   @IsAlphaExtended()
-  lastName: string;
+  surname: string;
 
   @IsEmail()
+  @MinLength(6)
   @IsUserAlreadyExist()
   email: string;
 
-  @MinLength(8)
-  @MaxLength(50)
+  @MinLength(6)
+  @MaxLength(64)
   @IsStrongPassword({
     minLowercase: 1,
     minUppercase: 1,
