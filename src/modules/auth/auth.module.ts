@@ -8,10 +8,17 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.auth.strategy';
 import { RefreshTokenStrategy } from './strategies/jwt.refresh.strategy';
 import { UsersModule } from '../users/users.module';
+import { MailService } from '../mail/mail.service';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, RefreshTokenStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    RefreshTokenStrategy,
+    MailService,
+  ],
   imports: [PassportModule, JwtModule, UsersModule],
 })
 export class AuthModule {}

@@ -15,6 +15,9 @@ export class User {
   @Column()
   email: string;
 
+  @Column({ default: false })
+  isEmailConfirmed: boolean;
+
   @Column({ nullable: true, default: null })
   refreshToken: string | null;
 

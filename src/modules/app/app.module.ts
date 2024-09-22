@@ -2,9 +2,12 @@ import { Module } from '@nestjs/common';
 import configuration from '@config/configuration';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
 import { UsersModule } from '../users/users.module';
 import { AuthModule } from '../auth/auth.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { MailModule } from '../mail/mail.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -27,10 +30,47 @@ import { AuthModule } from '../auth/auth.module';
       load: [configuration],
       isGlobal: true,
     }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        transport: `smtps://${configService.get('mail_login')}:${configService.get('mail_password')}@smtp.gmail.com`,
+        defaults: {
+          from: `"Талон-Онлайн" <${configService.get('mail_login')}>`,
+        },
+        template: {
+          dir: process.cwd() + '/src/templates',
+          adapter: new HandlebarsAdapter(undefined, {
+            inlineCssEnabled: true,
+          }),
+          options: {
+            strict: true,
+          },
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,
+        limit: 1,
+      },
+      {
+        name: 'medium',
+        ttl: 10000,
+        limit: 20,
+      },
+      {
+        name: 'long',
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
     UsersModule,
     AuthModule,
+    MailModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [],
 })
 export class AppModule {}

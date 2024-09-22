@@ -8,6 +8,8 @@ import { Request } from 'express';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { ExcludeUserPassword } from '../users/interfaces/excludeUserPassword';
+import { ResendConfirmationEmailDto } from './dto/resend-confirmation-email-dto';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
@@ -17,6 +19,16 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   async login(@CurrentUser() user: ExcludeUserPassword) {
     return await this.authService.login(user);
+  }
+
+  @Post('resend')
+  @Throttle({ default: { limit: 1, ttl: 10000 } })
+  async resendConfirmationEmail(
+    @Body() resendConfirmationEmailDto: ResendConfirmationEmailDto,
+  ) {
+    await this.authService.resendConfirmationEmail(
+      resendConfirmationEmailDto.email,
+    );
   }
 
   @Post('signup')

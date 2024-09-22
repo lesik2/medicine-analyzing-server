@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation Email</title>
+    <style>
+        body {
+            background:rgb(240,240,240);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px 15px 10px 15px;
+            text-align: center;
+            color: #000000;
+        }
+        .container {
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .link {
+            font-size: 12px;
+            padding: 0;
+            margin: 0;
+        }
+        .title {
+            color: #ef3124;
+            font-size: 24px;
+            margin: 0 0 5px 0px;
+        }
+        .greeting {
+            font-weight: 600;
+            font-size: 20px;
+            margin: 0px 0px 15px 0px;
+        }
+        .message {
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 1.5;
+            margin: 0px 0px 40px 0px;
+        }
+        .confirm-message {
+            font-size: 12px;
+            font-weight: 400;
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+            padding: 5px 0;
+        }
+        .footer {
+            font-size: 12px;
+            color: gray;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 class="title">Талон-Онлайн</h1>
+        <p class='link'>For <a href="{{email}}">{{email}}</a></p>
+    </header>
+    <div class="container">
+        <h2 class="greeting">Добро пожаловать! 💉</h2>
+        <p class="message">
+            Вы зарегистрировались в Талон-Онлайн.
+        </p>
+        <p class="confirm-message">
+            Подтвердите свой e-mail, нажав на <br/>
+            <a href="{{confirm_link}}">ссылку</a>.
+        </p>
+    </div>
+    <div class="footer">
+        &copy; 2024 Your Company. All Rights Reserved.
+    </div>
+</body>
+</html>

@@ -19,11 +19,14 @@ services:
     container_name: nest-docker-postgres
     environment:
       - PORT=${PORT}
+      - MAIL_LOGIN=${MAIL_LOGIN}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
       - DB_NAME=${DB_NAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_USERNAME=${DB_USERNAME}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
+      - EMAIL_CONFIRMATION_URL=${EMAIL_CONFIRMATION_URL}
     ports:
       - '4000:4000'
     depends_on:

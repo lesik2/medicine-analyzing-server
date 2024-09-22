@@ -11,6 +11,8 @@ import { TokenPayload } from './interfaces/token-payload.interface';
 import { CreateUserDto } from '../users/dto/create-user-dto';
 import { ErrorMessages } from '@/common/error-messages';
 import { ExcludeUserPassword } from '../users/interfaces/excludeUserPassword';
+import { MailService } from '../mail/mail.service';
+import { confirmationMailSubject } from './constants';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +20,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly mailService: MailService,
   ) {}
 
   async signUp(createUserDto: CreateUserDto): Promise<any> {
@@ -28,9 +31,42 @@ export class AuthService {
     if (userExists) {
       throw new BadRequestException(ErrorMessages.USER_ALREADY_EXIST);
     }
-
     const newUser = await this.usersService.create(createUserDto);
+    const tokens = await this.getTokens(newUser);
+    await this.updateRefreshToken(newUser.id, tokens.refreshToken);
+    this.mailService.sendMail({
+      to: newUser.email,
+      subject: confirmationMailSubject,
+      template: 'confirmationEmail',
+      context: {
+        email: newUser.email,
+        confirm_link: `${this.configService.get('email_confirmation_url')}?${tokens.refreshToken}`,
+      },
+    });
     return newUser;
+  }
+
+  async resendConfirmationEmail(email: string) {
+    const user = await this.usersService.findOne({ email });
+    if (!user) {
+      throw new BadRequestException(ErrorMessages.USER_NOT_FOUND);
+    }
+    if (user.isEmailConfirmed) {
+      throw new BadRequestException(ErrorMessages.USER_EMAIL_ALREADY_CONFIRMED);
+    }
+    const tokens = await this.getTokens(
+      this.usersService.excludePasswordFromUser(user),
+    );
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+    this.mailService.sendMail({
+      to: email,
+      subject: confirmationMailSubject,
+      template: 'confirmationEmail',
+      context: {
+        email: email,
+        confirm_link: `${this.configService.get('email_confirmation_url')}?${tokens.refreshToken}`,
+      },
+    });
   }
 
   async login(user: ExcludeUserPassword) {
@@ -50,6 +86,10 @@ export class AuthService {
   async refreshTokens(userId: string, refreshToken: string) {
     const user = await this.usersService.findOne({ id: userId });
     if (!user || !user.refreshToken) throw new ForbiddenException();
+    if (!user.isEmailConfirmed)
+      throw new UnauthorizedException(
+        ErrorMessages.USER_EMAIL_SHOULD_BE_CONFIRMED,
+      );
     const refreshTokenMatches = await this.usersService.decryptData(
       refreshToken,
       user.refreshToken,
@@ -89,26 +129,35 @@ export class AuthService {
     };
   }
 
-  async validateUser(email: string, password: string) {
-    try {
-      const user = await this.usersService.findOne({
-        email,
-      });
-      if (!user) {
-        throw new UnauthorizedException();
-      }
-      const authenticated = await this.usersService.decryptData(
-        password,
-        user.password,
-      );
-      if (!authenticated) {
-        throw new UnauthorizedException();
-      }
-      return this.usersService.excludePasswordFromUser(user);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        throw new UnauthorizedException(ErrorMessages.WRONG_SIGN_IN_MESSAGE);
-      }
+  async validateUser(email: string, password: string, token?: string) {
+    const user = await this.usersService.findOne({
+      email,
+    });
+    if (!user) {
+      throw new UnauthorizedException(ErrorMessages.WRONG_SIGN_IN_MESSAGE);
     }
+    if (!user.isEmailConfirmed) {
+      const isEmailConfirmed = await this.usersService.decryptData(
+        token,
+        user.refreshToken,
+      );
+
+      if (!isEmailConfirmed) {
+        throw new UnauthorizedException(
+          ErrorMessages.USER_EMAIL_SHOULD_BE_CONFIRMED,
+        );
+      }
+      await this.usersService.update(user.id, {
+        isEmailConfirmed: true,
+      });
+    }
+    const authenticated = await this.usersService.decryptData(
+      password,
+      user.password,
+    );
+    if (!authenticated) {
+      throw new UnauthorizedException(ErrorMessages.WRONG_SIGN_IN_MESSAGE);
+    }
+    return this.usersService.excludePasswordFromUser(user);
   }
 }
