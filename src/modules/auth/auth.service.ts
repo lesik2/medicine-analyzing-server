@@ -12,7 +12,8 @@ import { CreateUserDto } from '../users/dto/create-user-dto';
 import { ErrorMessages } from '@/common/error-messages';
 import { ExcludeUserPassword } from '../users/interfaces/excludeUserPassword';
 import { MailService } from '../mail/mail.service';
-import { confirmationMailSubject } from './constants';
+import { confirmationMailSubject, resetPasswordMailSubject } from './constants';
+import { RestorePasswordDto } from './dto/restore-password-dto';
 
 @Injectable()
 export class AuthService {
@@ -39,7 +40,7 @@ export class AuthService {
       subject: confirmationMailSubject,
       template: 'confirmationEmail',
       context: {
-        confirm_link: `${this.configService.get('email_confirmation_url')}?${tokens.refreshToken}`,
+        confirm_link: `${this.configService.get('email_confirmation_url')}?token=${tokens.refreshToken}`,
       },
     });
     return newUser;
@@ -62,8 +63,48 @@ export class AuthService {
       subject: confirmationMailSubject,
       template: 'confirmationEmail',
       context: {
-        confirm_link: `${this.configService.get('email_confirmation_url')}?${tokens.refreshToken}`,
+        confirm_link: `${this.configService.get('email_confirmation_url')}?token=${tokens.refreshToken}`,
       },
+    });
+  }
+
+  async sendEmailForRestorePassword(email: string) {
+    const user = await this.usersService.findOne({ email });
+    if (!user) {
+      throw new BadRequestException(ErrorMessages.USER_NOT_FOUND);
+    }
+    const tokens = await this.getTokens(
+      this.usersService.excludePasswordFromUser(user),
+    );
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+    this.mailService.sendMail({
+      to: email,
+      subject: resetPasswordMailSubject,
+      template: 'resetPassword',
+      context: {
+        confirm_link: `${this.configService.get('email_reset_password_url')}?token=${tokens.refreshToken}&id=${user.id}`,
+      },
+    });
+  }
+
+  async restorePassword(restorePasswordDto: RestorePasswordDto) {
+    const { userId, token, newPassword } = restorePasswordDto;
+    const user = await this.usersService.findOne({
+      id: userId,
+    });
+    if (!user) {
+      throw new UnauthorizedException(ErrorMessages.WRONG_SIGN_IN_MESSAGE);
+    }
+
+    const authenticated = await this.usersService.decryptData(
+      token,
+      user.refreshToken,
+    );
+    if (!authenticated) {
+      throw new UnauthorizedException(ErrorMessages.WRONG_SIGN_IN_MESSAGE);
+    }
+    return await this.usersService.update(userId, {
+      password: await this.usersService.encryptData(newPassword),
     });
   }
 

@@ -8,8 +8,9 @@ import { Request } from 'express';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { ExcludeUserPassword } from '../users/interfaces/excludeUserPassword';
-import { ResendConfirmationEmailDto } from './dto/resend-confirmation-email-dto';
+import { EmailDto } from './dto/resend-confirmation-email-dto';
 import { Throttle } from '@nestjs/throttler';
+import { RestorePasswordDto } from './dto/restore-password-dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,12 +24,21 @@ export class AuthController {
 
   @Post('resend')
   @Throttle({ default: { limit: 1, ttl: 10000 } })
-  async resendConfirmationEmail(
-    @Body() resendConfirmationEmailDto: ResendConfirmationEmailDto,
-  ) {
+  async resendConfirmationEmail(@Body() resendConfirmationEmailDto: EmailDto) {
     await this.authService.resendConfirmationEmail(
       resendConfirmationEmailDto.email,
     );
+  }
+
+  @Post('recall')
+  @Throttle({ default: { limit: 1, ttl: 10000 } })
+  async sendEmailForRestorePassword(@Body() emailDto: EmailDto) {
+    await this.authService.sendEmailForRestorePassword(emailDto.email);
+  }
+
+  @Post('restore')
+  async restorePassword(@Body() restorePasswordDto: RestorePasswordDto) {
+    return await this.authService.restorePassword(restorePasswordDto);
   }
 
   @Post('signup')

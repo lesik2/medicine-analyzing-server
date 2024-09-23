@@ -1,3 +1,3 @@
-export class ResendConfirmationEmailDto {
+export class EmailDto {
   email: string;
 }

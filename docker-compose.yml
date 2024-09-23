@@ -27,6 +27,7 @@ services:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
       - EMAIL_CONFIRMATION_URL=${EMAIL_CONFIRMATION_URL}
+      - EMAIL_RESET_PASSWORD_URL=${EMAIL_RESET_PASSWORD_URL}
     ports:
       - '4000:4000'
     depends_on:
