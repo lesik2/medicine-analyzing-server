@@ -39,7 +39,6 @@ export class AuthService {
       subject: confirmationMailSubject,
       template: 'confirmationEmail',
       context: {
-        email: newUser.email,
         confirm_link: `${this.configService.get('email_confirmation_url')}?${tokens.refreshToken}`,
       },
     });
@@ -63,7 +62,6 @@ export class AuthService {
       subject: confirmationMailSubject,
       template: 'confirmationEmail',
       context: {
-        email: email,
         confirm_link: `${this.configService.get('email_confirmation_url')}?${tokens.refreshToken}`,
       },
     });
