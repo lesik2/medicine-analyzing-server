@@ -7,6 +7,6 @@
 
 [C4 Component](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/C4-Component.jpeg)
 
-[Диаграмма классов](https://github.com/iamlinss/Popytki/blob/main/doc/Class.png)
+[Диаграмма классов](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/Class.jpeg)
 
-[Диаграмма us-case](https://github.com/iamlinss/Popytki/blob/main/doc/Us-case.png)
+[Диаграмма us-case](https://github.com/iamlinss/Popytki/blob/main/doc/Us-case.jpeg)
