@@ -21,7 +21,9 @@
       "@/*": ["./src/*"],
       "@modules/*": ["./src/modules/*"],
       "@common/*": ["./src/common/*"],
-      "@configuration/*": ["./src/configuration/*"],
+      "@config/*": ["src/config/*"],
     }
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }
