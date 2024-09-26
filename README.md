@@ -3,9 +3,9 @@
 
 [Макет дизайна Программного средства](https://www.figma.com/design/C6cd9B0eCwqqc1wrGTbnuQ/Design-system?node-id=0-1&t=NqygM9IXau5LIbob-1)
 
-[C4 Container](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/C4-Container.jpeg)
+[C4 Container](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/C4-Container.jpg)
 
-[C4 Component](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/C4-Component.jpeg)
+[C4 Component](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/C4-Component.jpg)
 
 [Диаграмма классов](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/Class.jpeg)
 
