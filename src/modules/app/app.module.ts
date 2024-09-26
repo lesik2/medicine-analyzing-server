@@ -8,6 +8,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { MailModule } from '../mail/mail.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { PatientsModule } from '../patients/patients.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     UsersModule,
     AuthModule,
     MailModule,
+    PatientsModule,
   ],
   controllers: [],
   providers: [],

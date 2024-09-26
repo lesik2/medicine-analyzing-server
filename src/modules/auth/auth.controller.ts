@@ -1,16 +1,16 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local.auth.guard';
-import { CurrentUser } from './decorators/current-user-decorator';
+import { CurrentUser } from '../../decorators/current-user-decorator';
 
 import { CreateUserDto } from '../users/dto/create-user-dto';
 import { Request } from 'express';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
-import { ExcludeUserPassword } from '../users/interfaces/excludeUserPassword';
 import { EmailDto } from './dto/resend-confirmation-email-dto';
 import { Throttle } from '@nestjs/throttler';
 import { RestorePasswordDto } from './dto/restore-password-dto';
+import { ExcludeUserPassword } from '@/types/excludeUserPassword';
 
 @Controller('auth')
 export class AuthController {

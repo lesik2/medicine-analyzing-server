@@ -1,5 +1,6 @@
-import { Roles } from '@/types/roles';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Patient } from '@/modules/patients/models/patient.entity';
+import { Roles } from '@/types';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class User {
@@ -30,4 +31,7 @@ export class User {
     default: Roles.USER,
   })
   role: Roles;
+
+  @OneToMany(() => Patient, (patient) => patient.user)
+  patients: Patient[];
 }

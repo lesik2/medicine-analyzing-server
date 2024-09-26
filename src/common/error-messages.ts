@@ -7,4 +7,7 @@ export enum ErrorMessages {
   USER_NOT_FOUND = 'Такого пользователя не существует',
   USER_EMAIL_ALREADY_CONFIRMED = 'User email is already confirmed',
   USER_EMAIL_SHOULD_BE_CONFIRMED = 'E-mail пользователя не подтвержден',
+  PATIENT_CHILD_OLDER_ERROR = 'Ребенок не может быть старше 18 лет.',
+  PATIENT_ADULT_YOUNGER_ERROR = 'Для взрослых минимальный возраст — 18 лет.',
+  PATIENT_NOT_FOUND = 'Пациент с таким id не найден',
 }

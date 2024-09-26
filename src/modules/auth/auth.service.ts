@@ -10,10 +10,10 @@ import { ConfigService } from '@nestjs/config';
 import { TokenPayload } from './interfaces/token-payload.interface';
 import { CreateUserDto } from '../users/dto/create-user-dto';
 import { ErrorMessages } from '@/common/error-messages';
-import { ExcludeUserPassword } from '../users/interfaces/excludeUserPassword';
 import { MailService } from '../mail/mail.service';
 import { confirmationMailSubject, resetPasswordMailSubject } from './constants';
 import { RestorePasswordDto } from './dto/restore-password-dto';
+import { ExcludeUserPassword } from '@/types/excludeUserPassword';
 
 @Injectable()
 export class AuthService {
