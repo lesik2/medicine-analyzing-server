@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './models/user.entity';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { ExcludeUserPassword } from './interfaces/excludeUserPassword';
+import { ExcludeUserPassword } from '@/types/excludeUserPassword';
 
 @Injectable()
 export class UsersService {

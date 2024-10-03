@@ -5,7 +5,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { IsUserAlreadyExist } from '../decorators/is-user-already-exist-decorator';
-import { IsAlphaExtended } from '../decorators/is-alpha-extended-decorator';
+import { IsAlphaExtended } from '@/decorators/is-alpha-extended-decorator';
 
 export class CreateUserDto {
   @IsAlphaExtended()

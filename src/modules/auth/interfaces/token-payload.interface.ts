@@ -1,3 +1,3 @@
-import { ExcludeUserPassword } from '@/modules/users/interfaces/excludeUserPassword';
+import { ExcludeUserPassword } from '@/types/excludeUserPassword';
 
 export type TokenPayload = ExcludeUserPassword;
