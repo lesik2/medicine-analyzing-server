@@ -1,6 +1,14 @@
+import { Doctor } from '@/modules/doctors/models/doctor.entity';
 import { Patient } from '@/modules/patients/models/patient.entity';
 import { Roles } from '@/types';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
@@ -34,4 +42,8 @@ export class User {
 
   @OneToMany(() => Patient, (patient) => patient.user)
   patients: Patient[];
+
+  @OneToOne(() => Doctor)
+  @JoinColumn()
+  doctor: Doctor;
 }

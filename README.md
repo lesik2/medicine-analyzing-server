@@ -10,3 +10,5 @@
 [Диаграмма классов](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/Class.jpeg)
 
 [Диаграмма us-case](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/Us-case.jpeg)
+
+[ERD-базы данных](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/ERD-DB.png)

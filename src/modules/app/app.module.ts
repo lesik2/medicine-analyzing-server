@@ -9,6 +9,16 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { MailModule } from '../mail/mail.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { PatientsModule } from '../patients/patients.module';
+import { User } from '../users/models/user.entity';
+import { Doctor } from '../doctors/models/doctor.entity';
+import { Patient } from '../patients/models/patient.entity';
+import { Office } from '../offices/models/office.entity';
+import { Analysis } from '../care-patient/models/analysis.entity';
+import { CarePatient } from '../care-patient/models/care-patient.entity';
+import { Conclusion } from '../care-patient/models/conclusion.entity';
+import { Reception } from '../care-patient/models/reception.entity';
+import { Appointment } from '../appointment/models/appointment.entity';
+import { TimeTracking } from '../time-tracking/modules/time-tracking.entity';
 
 @Module({
   imports: [
@@ -21,9 +31,19 @@ import { PatientsModule } from '../patients/patients.module';
         username: configService.get('db_username'),
         password: configService.get('db_password'),
         database: configService.get('db_name'),
-        entities: [],
+        entities: [
+          User,
+          Doctor,
+          Patient,
+          Office,
+          Analysis,
+          CarePatient,
+          Conclusion,
+          Reception,
+          Appointment,
+          TimeTracking,
+        ],
         synchronize: true,
-        autoLoadEntities: true,
       }),
       inject: [ConfigService],
     }),
