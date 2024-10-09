@@ -7,14 +7,14 @@ export class Office {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ type: 'integer' })
   number: number;
 
   @Column({
     type: 'enum',
     enum: Departments,
   })
-  specialty: Departments;
+  department: Departments;
 
   @OneToMany(() => Doctor, (doctor) => doctor.office)
   doctors: Doctor[];

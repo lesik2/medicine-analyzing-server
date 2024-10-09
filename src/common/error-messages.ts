@@ -10,4 +10,5 @@ export enum ErrorMessages {
   PATIENT_CHILD_OLDER_ERROR = 'Ребенок не может быть старше 18 лет.',
   PATIENT_ADULT_YOUNGER_ERROR = 'Для взрослых минимальный возраст — 18 лет.',
   PATIENT_NOT_FOUND = 'Пациент с таким id не найден',
+  OFFICE_NOT_FOUND = 'Кабинет с таким id не найден',
 }

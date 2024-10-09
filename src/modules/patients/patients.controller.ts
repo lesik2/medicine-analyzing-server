@@ -18,6 +18,7 @@ import { PatientsService } from './patients.service';
 import { ExcludeUserPassword } from '@/types/excludeUserPassword';
 import { Patient } from './models/patient.entity';
 import { UpdatePatientDto } from './dto/update-patient-dto';
+import { IdParams } from '@/types/params';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @AppRoles([Roles.USER])
@@ -51,7 +52,7 @@ export class PatientsController {
   @Get(':id')
   async findOne(
     @CurrentUser() user: ExcludeUserPassword,
-    @Param() params: any,
+    @Param() params: IdParams,
   ) {
     return await this.patientsService.findOne(user.id, params.id);
   }

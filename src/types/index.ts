@@ -42,19 +42,20 @@ export enum Specialty {
 }
 
 export enum Departments {
-  GENERAL_PRACTICE = 'Общая практика',
-  OBSTETRICS = 'Акушер-гинекология',
-  SURGERY = 'Хирургия',
-  DENTISTRY = 'Стоматология',
-  THERAPY = 'Терапия',
-  OPHTHALMOLOGY = 'Офтальмология',
-  PEDIATRICS = 'Педиатрия',
-  CARDIOLOGY = 'Кардиология',
-  NEUROLOGY = 'Неврология',
-  ENDOCRINOLOGY = 'Эндокринология',
-  DERMATOLOGY = 'Дерматология',
-  MENTAL_HEALTH = 'Психиатрия',
+  GENERAL_PRACTICE = 'Кабинет общей практики',
+  OBSTETRICS = 'Кабинет акушер-гинекологии',
+  SURGERY = 'Кабинет хирургии',
+  DENTISTRY = 'Кабинет стоматологии',
+  THERAPY = 'Кабинет терапии',
+  OPHTHALMOLOGY = 'Кабинет офтальмологии',
+  PEDIATRICS = 'Кабинет педиатрии',
+  CARDIOLOGY = 'Кабинет кардиологии',
+  NEUROLOGY = 'Кабинет неврологии',
+  ENDOCRINOLOGY = 'Кабинет эндокринологии',
+  DERMATOLOGY = 'Кабинет дерматологии',
+  MENTAL_HEALTH = 'Кабинет психиатрии',
 }
+
 export enum AnalysisTypes {
   GENERAL_BLOOD_TEST = 'Общий анализ крови',
   VENOUS_BLOOD_TEST = 'Анализ крови из вены',
