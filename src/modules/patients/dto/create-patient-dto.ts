@@ -17,7 +17,7 @@ export class CreatePatientDto {
 
   @IsOptional()
   @IsAlphaExtended()
-  patronymic: string;
+  patronymic: string | null;
 
   @IsEnum(Gender)
   gender: Gender;
@@ -30,9 +30,6 @@ export class CreatePatientDto {
 
   @IsPhoneNumber('BY')
   phone: string;
-
-  @IsAlphaExtended()
-  locality: string;
 
   @IsString()
   address: string;

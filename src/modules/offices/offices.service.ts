@@ -1,9 +1,10 @@
-import { Departments } from '@/types';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Office } from './models/office.entity';
 import { ErrorMessages } from '@/common/error-messages';
+import { GetAllOfficeResponse, getAllOfficesQuery } from './types';
+import { CreateOfficeDto } from './dto/create-office-dto';
 
 @Injectable()
 export class OfficesService {
@@ -12,30 +13,66 @@ export class OfficesService {
     private officesRepository: Repository<Office>,
   ) {}
 
-  async findAll(department?: Departments[] | Departments) {
-    if (!department) {
-      return await this.officesRepository.find();
+  async create(createOfficeDto: CreateOfficeDto) {
+    const newOffice = this.officesRepository.create({
+      ...createOfficeDto,
+    });
+
+    const savedOffice = await this.officesRepository.save(newOffice);
+    return savedOffice;
+  }
+
+  async findAll(query: getAllOfficesQuery): Promise<GetAllOfficeResponse> {
+    const { sortKey, sortDirection, page, perPage } = query;
+
+    const officeQuery = this.officesRepository
+      .createQueryBuilder('office')
+      .leftJoinAndSelect('office.doctors', 'doctor')
+      .select([
+        'office.id',
+        'office.number',
+        'office.specialty',
+        'doctor.id',
+        'doctor.name',
+        'doctor.surname',
+        'doctor.patronymic',
+        'doctor.typeOfShifts',
+      ]);
+
+    if (sortKey) {
+      officeQuery.orderBy(`office.${sortKey}`, sortDirection);
     }
 
-    const departmentsArray = Array.isArray(department)
-      ? department
-      : [department];
-    const offices = await this.officesRepository.find({
-      where: {
-        department: In(departmentsArray),
-      },
-    });
-    return offices;
+    const total = await officeQuery.getCount();
+
+    officeQuery.take(perPage);
+    officeQuery.skip(page * perPage);
+
+    const offices = await officeQuery.getMany();
+
+    return {
+      items: offices.map((office) => ({
+        id: office.id,
+        number: office.number,
+        specialty: office.specialty,
+        doctors: office.doctors.map((doctor) => ({
+          fullName: `${doctor.surname} ${doctor.name} ${doctor.patronymic}`,
+          typeOfShifts: doctor.typeOfShifts,
+          id: doctor.id,
+        })),
+      })),
+      total,
+    };
   }
 
   async findOne(officeId: string) {
-    const patient = await this.officesRepository.findOne({
+    const office = await this.officesRepository.findOne({
       where: { id: officeId },
     });
 
-    if (!patient) {
+    if (!office) {
       throw new NotFoundException(ErrorMessages.OFFICE_NOT_FOUND);
     }
-    return patient;
+    return office;
   }
 }

@@ -20,6 +20,7 @@ import { Reception } from '../care-patient/models/reception.entity';
 import { Appointment } from '../appointment/models/appointment.entity';
 import { TimeTracking } from '../time-tracking/modules/time-tracking.entity';
 import { OfficesModule } from '../offices/offices.module';
+import { DoctorsModule } from '../doctors/doctors.module';
 
 @Module({
   imports: [
@@ -93,6 +94,7 @@ import { OfficesModule } from '../offices/offices.module';
     MailModule,
     PatientsModule,
     OfficesModule,
+    DoctorsModule,
   ],
   controllers: [],
   providers: [],

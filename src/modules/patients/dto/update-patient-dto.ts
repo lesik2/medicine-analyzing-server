@@ -21,7 +21,7 @@ export class UpdatePatientDto {
 
   @IsOptional()
   @IsAlphaExtended()
-  patronymic: string;
+  patronymic: string | null;
 
   @IsEnum(Gender)
   gender: Gender;
@@ -34,9 +34,6 @@ export class UpdatePatientDto {
 
   @IsPhoneNumber('BY')
   phone: string;
-
-  @IsAlphaExtended()
-  locality: string;
 
   @IsString()
   address: string;

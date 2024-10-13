@@ -45,9 +45,6 @@ export class Patient {
   phone: string;
 
   @Column()
-  locality: string;
-
-  @Column()
   address: string;
 
   @ManyToOne(() => User, (user) => user.patients)

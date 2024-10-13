@@ -1,5 +1,5 @@
 import { Doctor } from '@/modules/doctors/models/doctor.entity';
-import { Departments } from '@/types';
+import { Specialty } from '@/types';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
@@ -12,9 +12,9 @@ export class Office {
 
   @Column({
     type: 'enum',
-    enum: Departments,
+    enum: Specialty,
   })
-  department: Departments;
+  specialty: Specialty;
 
   @OneToMany(() => Doctor, (doctor) => doctor.office)
   doctors: Doctor[];

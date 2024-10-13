@@ -1,10 +1,20 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { OfficesService } from './offices.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { RolesGuard } from '@/guards/roles.guard';
 import { AppRoles } from '@/decorators/roles-decorator';
-import { Departments, Roles } from '@/types';
+import { Roles } from '@/types';
 import { IdParams } from '@/types/params';
+import { getAllOfficesQuery } from './types';
+import { CreateOfficeDto } from './dto/create-office-dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @AppRoles([Roles.MANAGER])
@@ -13,8 +23,13 @@ export class OfficesController {
   constructor(private readonly officeService: OfficesService) {}
 
   @Get()
-  async findAll(@Query('department') department?: Departments[] | Departments) {
-    return await this.officeService.findAll(department);
+  async findAll(@Query() query: getAllOfficesQuery) {
+    return await this.officeService.findAll(query);
+  }
+
+  @Post()
+  async create(@Body() createOfficeDto: CreateOfficeDto) {
+    return await this.officeService.create(createOfficeDto);
   }
 
   @Get(':id')
