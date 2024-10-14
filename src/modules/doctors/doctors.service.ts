@@ -44,7 +44,15 @@ export class DoctorsService {
       user: user,
     });
 
-    return await this.doctorsRepository.save(doctor);
+    const savedDoctor = await this.doctorsRepository.save(doctor);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userWithoutPassword } = savedDoctor.user;
+    const updatedSavedDoctor = {
+      ...savedDoctor,
+      user: userWithoutPassword,
+    };
+
+    return updatedSavedDoctor;
   }
 
   async findAll(query: getAllDoctorsQuery): Promise<GetAllDoctorsResponse> {

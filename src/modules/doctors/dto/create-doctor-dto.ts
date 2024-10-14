@@ -18,7 +18,7 @@ export class CreateDoctorDto {
 
   @IsOptional()
   @IsAlphaExtended()
-  patronymic: string | null;
+  patronymic?: string;
 
   @IsEnum(Specialty)
   specialty: Specialty;
@@ -26,8 +26,9 @@ export class CreateDoctorDto {
   @IsEnum(TypesOfShifts)
   typeOfShifts: TypesOfShifts;
 
+  @IsOptional()
   @IsUUID('all')
-  officeId: string;
+  officeId?: string;
 
   @IsEmail()
   @MinLength(6)

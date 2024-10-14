@@ -13,7 +13,7 @@ import { RolesGuard } from '@/guards/roles.guard';
 import { AppRoles } from '@/decorators/roles-decorator';
 import { Roles } from '@/types';
 import { IdParams } from '@/types/params';
-import { getAllOfficesQuery } from './types';
+import { getAllOfficesQuery, getFreeOfficesQuery } from './types';
 import { CreateOfficeDto } from './dto/create-office-dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -25,6 +25,11 @@ export class OfficesController {
   @Get()
   async findAll(@Query() query: getAllOfficesQuery) {
     return await this.officeService.findAll(query);
+  }
+
+  @Get('/free')
+  async findFreeOffices(@Query() query: getFreeOfficesQuery) {
+    return await this.officeService.findFreeOffices(query);
   }
 
   @Post()

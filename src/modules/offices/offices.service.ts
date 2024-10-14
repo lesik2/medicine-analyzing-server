@@ -3,9 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Office } from './models/office.entity';
 import { ErrorMessages } from '@/common/error-messages';
-import { GetAllOfficeResponse, getAllOfficesQuery } from './types';
+import {
+  FreeOffice,
+  GetAllOfficeResponse,
+  getAllOfficesQuery,
+  getFreeOfficesQuery,
+} from './types';
 import { CreateOfficeDto } from './dto/create-office-dto';
 import { getOfficeStatus } from './utils/getOfficeStatus';
+import { TypesOfShifts } from '@/types';
 
 @Injectable()
 export class OfficesService {
@@ -21,6 +27,57 @@ export class OfficesService {
 
     const savedOffice = await this.officesRepository.save(newOffice);
     return savedOffice;
+  }
+  async findFreeOffices(query: getFreeOfficesQuery): Promise<FreeOffice[]> {
+    const { specialty, typeOfShifts } = query;
+
+    const offices = await this.officesRepository
+      .createQueryBuilder('office')
+      .leftJoinAndSelect('office.doctors', 'doctor')
+      .where('office.specialty = :specialty', { specialty })
+      .select(['office.id', 'office.number', 'doctor.typeOfShifts'])
+      .getMany();
+
+    const officesShifts = offices.map((office) => {
+      const shiftAvailability = {
+        [TypesOfShifts.FIRST_SHIFT]: true,
+        [TypesOfShifts.SECOND_SHIFT]: true,
+      };
+
+      office.doctors.forEach((doctor) => {
+        if (doctor.typeOfShifts === TypesOfShifts.FIRST_SHIFT) {
+          shiftAvailability[TypesOfShifts.FIRST_SHIFT] = false;
+        }
+        if (doctor.typeOfShifts === TypesOfShifts.SECOND_SHIFT) {
+          shiftAvailability[TypesOfShifts.SECOND_SHIFT] = false;
+        }
+        if (doctor.typeOfShifts === TypesOfShifts.FULL_SHIFT) {
+          shiftAvailability[TypesOfShifts.FIRST_SHIFT] = false;
+          shiftAvailability[TypesOfShifts.SECOND_SHIFT] = false;
+        }
+      });
+
+      const availableShifts = Object.keys(shiftAvailability).filter(
+        (shift) => shiftAvailability[shift],
+      );
+
+      return {
+        key: office.id,
+        value: {
+          id: office.id,
+          number: office.number,
+          specialty: office.specialty,
+          availableShifts,
+        },
+      };
+    });
+
+    return officesShifts.filter((office) => {
+      if (typeOfShifts === TypesOfShifts.FULL_SHIFT) {
+        return office.value.availableShifts.length === 2;
+      }
+      return office.value.availableShifts.includes(typeOfShifts);
+    });
   }
 
   async findAll(query: getAllOfficesQuery): Promise<GetAllOfficeResponse> {
