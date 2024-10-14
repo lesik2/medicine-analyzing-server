@@ -1,4 +1,4 @@
-import { Specialty, TypesOfShifts } from '@/types';
+import { Specialty, Status, TypesOfShifts } from '@/types';
 import { SortDirection } from '@/types/sortDirection';
 
 export interface getAllOfficesQuery {
@@ -17,6 +17,7 @@ export interface OfficeResponseEntity {
     fullName: string;
     typeOfShifts: TypesOfShifts;
   }[];
+  status: Status;
 }
 
 export interface GetAllOfficeResponse {

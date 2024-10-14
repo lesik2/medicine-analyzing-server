@@ -20,6 +20,12 @@ export enum TypesOfShifts {
   FULL_SHIFT = 'Полная смена',
 }
 
+export enum Status {
+  FILLED = 'Полный состав',
+  PARTIALLY_FILLED = 'Один сотрудник',
+  EMPTY = 'Нет сотрудников',
+}
+
 // export enum TIME_OF_SHIFTS {
 //   FIRST_SHIFT = '8.00 - 13.00',
 //   SECOND_SHIFT = '14.00 - 18.50',

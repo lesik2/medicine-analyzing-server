@@ -5,6 +5,7 @@ import { Office } from './models/office.entity';
 import { ErrorMessages } from '@/common/error-messages';
 import { GetAllOfficeResponse, getAllOfficesQuery } from './types';
 import { CreateOfficeDto } from './dto/create-office-dto';
+import { getOfficeStatus } from './utils/getOfficeStatus';
 
 @Injectable()
 export class OfficesService {
@@ -60,6 +61,7 @@ export class OfficesService {
           typeOfShifts: doctor.typeOfShifts,
           id: doctor.id,
         })),
+        status: getOfficeStatus(office.doctors),
       })),
       total,
     };
