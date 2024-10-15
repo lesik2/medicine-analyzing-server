@@ -81,7 +81,7 @@ export class OfficesService {
   }
 
   async findAll(query: getAllOfficesQuery): Promise<GetAllOfficeResponse> {
-    const { sortKey, sortDirection, page, perPage } = query;
+    const { sortKey, sortDirection, page, perPage, filters } = query;
 
     const officeQuery = this.officesRepository
       .createQueryBuilder('office')
@@ -100,6 +100,11 @@ export class OfficesService {
     if (sortKey) {
       officeQuery.orderBy(`office.${sortKey}`, sortDirection);
     }
+    if (filters?.specialty) {
+      officeQuery.where('office.specialty = :specialty', {
+        specialty: filters.specialty,
+      });
+    }
 
     const total = await officeQuery.getCount();
 
@@ -108,7 +113,7 @@ export class OfficesService {
 
     const offices = await officeQuery.getMany();
 
-    return {
+    const getAllOfficeResponse = {
       items: offices.map((office) => ({
         id: office.id,
         number: office.number,
@@ -122,6 +127,18 @@ export class OfficesService {
       })),
       total,
     };
+
+    if (filters?.status) {
+      const filteredItems = getAllOfficeResponse.items.filter(
+        (item) => item.status === filters.status,
+      );
+      return {
+        total: filteredItems.length,
+        items: filteredItems,
+      };
+    }
+
+    return getAllOfficeResponse;
   }
 
   async findOne(officeId: string) {

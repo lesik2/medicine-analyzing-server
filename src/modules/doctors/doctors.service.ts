@@ -56,7 +56,7 @@ export class DoctorsService {
   }
 
   async findAll(query: getAllDoctorsQuery): Promise<GetAllDoctorsResponse> {
-    const { sortKey, sortDirection, page, perPage } = query;
+    const { sortKey, sortDirection, page, perPage, filters } = query;
 
     const doctorsQuery = this.doctorsRepository
       .createQueryBuilder('doctor')
@@ -69,6 +69,17 @@ export class DoctorsService {
       } else {
         doctorsQuery.orderBy(`doctor.${sortKey}`, sortDirection);
       }
+    }
+    if (filters?.specialty) {
+      doctorsQuery.where('doctor.specialty = :specialty', {
+        specialty: filters.specialty,
+      });
+    }
+
+    if (filters?.typeOfShifts) {
+      doctorsQuery.andWhere('doctor.typeOfShifts = :typeOfShifts', {
+        typeOfShifts: filters.typeOfShifts,
+      });
     }
 
     const total = await doctorsQuery.getCount();

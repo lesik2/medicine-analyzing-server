@@ -19,4 +19,8 @@ export interface getAllDoctorsQuery {
   sortDirection?: SortDirection;
   page: number;
   perPage: number;
+  filters?: {
+    typeOfShifts: TypesOfShifts;
+    specialty: Specialty;
+  };
 }

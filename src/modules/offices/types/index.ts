@@ -11,6 +11,10 @@ export interface getAllOfficesQuery {
   sortDirection?: SortDirection;
   page: number;
   perPage: number;
+  filters?: {
+    status: Status;
+    specialty: Specialty;
+  };
 }
 
 export interface OfficeResponseEntity {
