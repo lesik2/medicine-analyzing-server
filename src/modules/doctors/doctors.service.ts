@@ -1,13 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Doctor } from './models/doctor.entity';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { OfficesService } from '../offices/offices.service';
 import { CreateDoctorDto } from './dto/create-doctor-dto';
-import { Roles } from '@/types';
+import { Roles, Specialty, TypesOfShifts } from '@/types';
 import { UsersService } from '../users/users.service';
-import { getAllDoctorsQuery, GetAllDoctorsResponse } from './types';
+import {
+  DoctorResponse,
+  getAllDoctorsQuery,
+  GetAllDoctorsResponse,
+} from './types';
+import { Office } from '../offices/models/office.entity';
+import { UpdateDoctorDto } from './dto/update-office-dto';
+import { ErrorMessages } from '@/common/error-messages';
 
 @Injectable()
 export class DoctorsService {
@@ -15,11 +28,58 @@ export class DoctorsService {
     @InjectRepository(Doctor)
     private doctorsRepository: Repository<Doctor>,
     private readonly authService: AuthService,
+    @Inject(forwardRef(() => OfficesService))
     private readonly officeService: OfficesService,
     private readonly userService: UsersService,
   ) {}
 
+  validateOffice(
+    specialty: Specialty,
+    typeOfShifts: TypesOfShifts,
+    office: Office,
+    doctorId?: string,
+  ) {
+    if (office.specialty !== specialty) {
+      throw new BadRequestException(
+        ErrorMessages.OFFICE_SPECIALTY_DIFFER_FROM_DOCTOR,
+      );
+    }
+    const amountOfShifts = 2;
+    const oneShiftInOffice = 1;
+    const availableShifts = this.officeService.getAvailableShifts(
+      office.doctors,
+    );
+
+    if (
+      typeOfShifts === TypesOfShifts.FULL_SHIFT &&
+      availableShifts.length === amountOfShifts
+    ) {
+      return;
+    }
+
+    if (
+      office.doctors.length === oneShiftInOffice &&
+      office.doctors[0].id === doctorId
+    ) {
+      return;
+    }
+
+    if (availableShifts.includes(typeOfShifts)) {
+      return;
+    }
+    throw new BadRequestException(ErrorMessages.OFFICE_NO_AVAILABLE_SHIFTS);
+  }
+
   async create(createDoctorDto: CreateDoctorDto) {
+    const office = await this.officeService.findOne(createDoctorDto.officeId);
+    if (office) {
+      this.validateOffice(
+        createDoctorDto.specialty,
+        createDoctorDto.typeOfShifts,
+        office,
+      );
+    }
+
     const newPassword = this.authService.generateStrongPassword();
 
     const excludeUserPassword = await this.authService.signUp({
@@ -31,8 +91,6 @@ export class DoctorsService {
     });
 
     const user = await this.userService.findOne({ id: excludeUserPassword.id });
-
-    const office = await this.officeService.findOne(createDoctorDto.officeId);
 
     const doctor = this.doctorsRepository.create({
       name: createDoctorDto.name,
@@ -53,6 +111,55 @@ export class DoctorsService {
     };
 
     return updatedSavedDoctor;
+  }
+
+  async update(updateDoctorDto: UpdateDoctorDto) {
+    const office = await this.officeService.findOne(updateDoctorDto.officeId);
+
+    if (office) {
+      this.validateOffice(
+        updateDoctorDto.specialty,
+        updateDoctorDto.typeOfShifts,
+        office,
+        updateDoctorDto.id,
+      );
+    }
+    const doctorData = await this.doctorsRepository
+      .createQueryBuilder('doctor')
+      .leftJoinAndSelect('doctor.user', 'user')
+      .where('doctor.id = :doctorId', { doctorId: updateDoctorDto.id })
+      .getOne();
+
+    if (doctorData.user.email !== updateDoctorDto.email) {
+      const isEmailAlreadyExists = await this.userService.findOne({
+        email: updateDoctorDto.email,
+      });
+
+      if (isEmailAlreadyExists) {
+        throw new BadRequestException(ErrorMessages.USER_ALREADY_EXIST);
+      }
+
+      await this.userService.update(doctorData.user.id, {
+        email: updateDoctorDto.email,
+      });
+    }
+
+    const result = await this.doctorsRepository.update(
+      { id: updateDoctorDto.id },
+      {
+        name: updateDoctorDto.name,
+        surname: updateDoctorDto.surname,
+        patronymic: updateDoctorDto.patronymic,
+        typeOfShifts: updateDoctorDto.typeOfShifts,
+        specialty: updateDoctorDto.specialty,
+        office: office,
+      },
+    );
+
+    if (result.affected === 0) {
+      throw new NotFoundException(ErrorMessages.DOCTOR_NOT_FOUND);
+    }
+    return result;
   }
 
   async findAll(query: getAllDoctorsQuery): Promise<GetAllDoctorsResponse> {
@@ -95,9 +202,50 @@ export class DoctorsService {
         fullName: `${doctor.surname} ${doctor.name} ${doctor.patronymic}`,
         specialty: doctor.specialty,
         typeOfShifts: doctor.typeOfShifts,
-        officeNumber: doctor.office.number,
+        officeNumber: doctor.office ? doctor.office.number : null,
       })),
       total,
+    };
+  }
+
+  async isOfficeIncludesDoctors(office: Office) {
+    const doctors = await this.doctorsRepository.find({
+      where: { office: office },
+    });
+
+    return doctors.length > 0;
+  }
+
+  async findOne(doctorId: string): Promise<DoctorResponse> {
+    const doctorData = await this.doctorsRepository
+      .createQueryBuilder('doctor')
+      .leftJoinAndSelect('doctor.user', 'user')
+      .leftJoinAndSelect('doctor.office', 'office')
+      .leftJoinAndSelect('office.doctors', 'colleagues')
+      .where('doctor.id = :doctorId', { doctorId })
+      .getOne();
+
+    const availableShifts = doctorData.office
+      ? this.officeService.getAvailableShifts(doctorData.office.doctors)
+      : [];
+
+    return {
+      id: doctorData.id,
+      email: doctorData.user.email,
+      fullName: `${doctorData.surname} ${doctorData.name} ${doctorData.patronymic}`,
+      specialty: doctorData.specialty,
+      typeOfShifts: doctorData.typeOfShifts,
+      office: doctorData.office
+        ? {
+            key: doctorData.office.id,
+            value: {
+              number: doctorData.office.number,
+              id: doctorData.office.id,
+              specialty: doctorData.office.specialty,
+              availableShifts: availableShifts,
+            },
+          }
+        : null,
     };
   }
 }

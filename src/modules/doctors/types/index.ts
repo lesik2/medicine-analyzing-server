@@ -6,7 +6,7 @@ export interface DoctorResponseEntity {
   fullName: string;
   specialty: Specialty;
   typeOfShifts: TypesOfShifts;
-  officeNumber: number;
+  officeNumber: number | null;
 }
 
 export interface GetAllDoctorsResponse {
@@ -22,5 +22,22 @@ export interface getAllDoctorsQuery {
   filters?: {
     typeOfShifts: TypesOfShifts;
     specialty: Specialty;
+  };
+}
+
+export interface DoctorResponse {
+  id: string;
+  email: string;
+  fullName: string;
+  specialty: Specialty;
+  typeOfShifts: TypesOfShifts;
+  office: {
+    key: string;
+    value: {
+      id: string;
+      number: number;
+      specialty: Specialty;
+      availableShifts: string[];
+    };
   };
 }

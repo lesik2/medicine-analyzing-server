@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Office } from './models/office.entity';
@@ -10,17 +16,28 @@ import {
   getFreeOfficesQuery,
 } from './types';
 import { CreateOfficeDto } from './dto/create-office-dto';
-import { getOfficeStatus } from './utils/getOfficeStatus';
-import { TypesOfShifts } from '@/types';
+import { Status, TypesOfShifts } from '@/types';
+import { UpdateOfficeDto } from './dto/update-office-dto';
+import { DoctorsService } from '../doctors/doctors.service';
+import { Doctor } from '../doctors/models/doctor.entity';
 
 @Injectable()
 export class OfficesService {
   constructor(
     @InjectRepository(Office)
     private officesRepository: Repository<Office>,
+    @Inject(forwardRef(() => DoctorsService))
+    private readonly doctorsService: DoctorsService,
   ) {}
 
   async create(createOfficeDto: CreateOfficeDto) {
+    const isOfficeNumberExist = await this.officesRepository.findOne({
+      where: { number: createOfficeDto.number },
+    });
+
+    if (isOfficeNumberExist) {
+      throw new BadRequestException(ErrorMessages.OFFICE_NUMBER_ALREADY_EXISTS);
+    }
     const newOffice = this.officesRepository.create({
       ...createOfficeDto,
     });
@@ -28,6 +45,43 @@ export class OfficesService {
     const savedOffice = await this.officesRepository.save(newOffice);
     return savedOffice;
   }
+
+  async update(updateOfficeDto: UpdateOfficeDto) {
+    const office = await this.findOne(updateOfficeDto.id);
+
+    if (office.number !== updateOfficeDto.number) {
+      const isOfficeNumberExist = await this.officesRepository.findOne({
+        where: { number: updateOfficeDto.number },
+      });
+
+      if (isOfficeNumberExist) {
+        throw new BadRequestException(
+          ErrorMessages.OFFICE_NUMBER_ALREADY_EXISTS,
+        );
+      }
+    }
+    if (updateOfficeDto.specialty !== office.specialty) {
+      const isDoctorsExist =
+        await this.doctorsService.isOfficeIncludesDoctors(office);
+      if (isDoctorsExist) {
+        throw new BadRequestException(ErrorMessages.DOCTORS_EXISTS_IN_OFFICE);
+      }
+    }
+
+    const result = await this.officesRepository.update(
+      { id: updateOfficeDto.id },
+      {
+        number: updateOfficeDto.number,
+        specialty: updateOfficeDto.specialty,
+      },
+    );
+
+    if (result.affected === 0) {
+      throw new NotFoundException(ErrorMessages.OFFICE_NOT_FOUND);
+    }
+    return result;
+  }
+
   async findFreeOffices(query: getFreeOfficesQuery): Promise<FreeOffice[]> {
     const { specialty, typeOfShifts } = query;
 
@@ -39,27 +93,7 @@ export class OfficesService {
       .getMany();
 
     const officesShifts = offices.map((office) => {
-      const shiftAvailability = {
-        [TypesOfShifts.FIRST_SHIFT]: true,
-        [TypesOfShifts.SECOND_SHIFT]: true,
-      };
-
-      office.doctors.forEach((doctor) => {
-        if (doctor.typeOfShifts === TypesOfShifts.FIRST_SHIFT) {
-          shiftAvailability[TypesOfShifts.FIRST_SHIFT] = false;
-        }
-        if (doctor.typeOfShifts === TypesOfShifts.SECOND_SHIFT) {
-          shiftAvailability[TypesOfShifts.SECOND_SHIFT] = false;
-        }
-        if (doctor.typeOfShifts === TypesOfShifts.FULL_SHIFT) {
-          shiftAvailability[TypesOfShifts.FIRST_SHIFT] = false;
-          shiftAvailability[TypesOfShifts.SECOND_SHIFT] = false;
-        }
-      });
-
-      const availableShifts = Object.keys(shiftAvailability).filter(
-        (shift) => shiftAvailability[shift],
-      );
+      const availableShifts = this.getAvailableShifts(office.doctors);
 
       return {
         key: office.id,
@@ -123,7 +157,7 @@ export class OfficesService {
           typeOfShifts: doctor.typeOfShifts,
           id: doctor.id,
         })),
-        status: getOfficeStatus(office.doctors),
+        status: this.getOfficeStatus(office.doctors),
       })),
       total,
     };
@@ -142,13 +176,53 @@ export class OfficesService {
   }
 
   async findOne(officeId: string) {
-    const office = await this.officesRepository.findOne({
-      where: { id: officeId },
+    const office = await this.officesRepository
+      .createQueryBuilder('office')
+      .leftJoinAndSelect('office.doctors', 'doctor')
+      .where('office.id = :officeId', { officeId })
+      .getOne();
+    return office;
+  }
+
+  getOfficeStatus(doctors: Doctor[]) {
+    const hasFullShift = doctors.some(
+      (doctor) => doctor.typeOfShifts === TypesOfShifts.FULL_SHIFT,
+    );
+    const hasFirstShift = doctors.some(
+      (doctor) => doctor.typeOfShifts === TypesOfShifts.FIRST_SHIFT,
+    );
+    const hasSecondShift = doctors.some(
+      (doctor) => doctor.typeOfShifts === TypesOfShifts.SECOND_SHIFT,
+    );
+    if (hasFullShift || (hasFirstShift && hasSecondShift)) {
+      return Status.FILLED;
+    } else if (doctors.length === 1) {
+      return Status.PARTIALLY_FILLED;
+    } else {
+      return Status.EMPTY;
+    }
+  }
+  getAvailableShifts(doctors: Doctor[]) {
+    const shiftAvailability = {
+      [TypesOfShifts.FIRST_SHIFT]: true,
+      [TypesOfShifts.SECOND_SHIFT]: true,
+    };
+
+    doctors.forEach((doctor) => {
+      if (doctor.typeOfShifts === TypesOfShifts.FIRST_SHIFT) {
+        shiftAvailability[TypesOfShifts.FIRST_SHIFT] = false;
+      }
+      if (doctor.typeOfShifts === TypesOfShifts.SECOND_SHIFT) {
+        shiftAvailability[TypesOfShifts.SECOND_SHIFT] = false;
+      }
+      if (doctor.typeOfShifts === TypesOfShifts.FULL_SHIFT) {
+        shiftAvailability[TypesOfShifts.FIRST_SHIFT] = false;
+        shiftAvailability[TypesOfShifts.SECOND_SHIFT] = false;
+      }
     });
 
-    if (!office) {
-      throw new NotFoundException(ErrorMessages.OFFICE_NOT_FOUND);
-    }
-    return office;
+    return Object.keys(shiftAvailability).filter(
+      (shift) => shiftAvailability[shift],
+    );
   }
 }

@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -15,6 +16,7 @@ import { Roles } from '@/types';
 import { IdParams } from '@/types/params';
 import { getAllOfficesQuery, getFreeOfficesQuery } from './types';
 import { CreateOfficeDto } from './dto/create-office-dto';
+import { UpdateOfficeDto } from './dto/update-office-dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @AppRoles([Roles.MANAGER])
@@ -35,6 +37,11 @@ export class OfficesController {
   @Post()
   async create(@Body() createOfficeDto: CreateOfficeDto) {
     return await this.officeService.create(createOfficeDto);
+  }
+
+  @Patch()
+  async update(@Body() updateOfficeDto: UpdateOfficeDto) {
+    return await this.officeService.update(updateOfficeDto);
   }
 
   @Get(':id')
