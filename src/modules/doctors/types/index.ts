@@ -22,6 +22,7 @@ export interface getAllDoctorsQuery {
   filters?: {
     typeOfShifts: TypesOfShifts;
     specialty: Specialty;
+    number: number;
   };
 }
 

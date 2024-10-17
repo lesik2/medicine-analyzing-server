@@ -7,11 +7,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Patient } from './models/patient.entity';
 import { Repository } from 'typeorm';
 import { CreatePatientDto } from './dto/create-patient-dto';
-import { TypeOfPatient } from '@/types';
+import { AgeCategory } from '@/types';
 import { ErrorMessages } from '@/common/error-messages';
 import { UsersService } from '../users/users.service';
 import { UpdatePatientDto } from './dto/update-patient-dto';
 import * as moment from 'moment';
+import { patientsProfile } from './constants';
 
 @Injectable()
 export class PatientsService {
@@ -64,7 +65,18 @@ export class PatientsService {
     const patients = await this.patientsRepository.find({
       where: { user: { id: userId } },
     });
-    return patients;
+
+    return patientsProfile.map((profile) => {
+      const patient = patients.find(
+        (item) =>
+          item.ageCategory === profile.ageCategory && profile.patient === null,
+      );
+
+      return {
+        ...profile,
+        patient: patient || null,
+      };
+    });
   }
 
   async findOne(userId: string, patientId: string) {
@@ -80,17 +92,17 @@ export class PatientsService {
 
   private validatePatientAge(
     dateOfBirth: string,
-    ageCategory: TypeOfPatient,
+    ageCategory: AgeCategory,
   ): void {
     console.log(moment);
     const birthDate = moment(dateOfBirth, moment.ISO_8601);
     const age = moment().diff(moment(birthDate), 'years');
 
-    if (ageCategory === TypeOfPatient.CHILD && age > 18) {
+    if (ageCategory === AgeCategory.CHILD && age > 18) {
       throw new BadRequestException(ErrorMessages.PATIENT_CHILD_OLDER_ERROR);
     }
 
-    if (ageCategory === TypeOfPatient.ADULT && age < 18) {
+    if (ageCategory === AgeCategory.ADULT && age < 18) {
       throw new BadRequestException(ErrorMessages.PATIENT_ADULT_YOUNGER_ERROR);
     }
   }

@@ -23,12 +23,24 @@ import { Doctor } from '../doctors/models/doctor.entity';
 
 @Injectable()
 export class OfficesService {
+  private shiftOrder = {
+    [TypesOfShifts.FIRST_SHIFT]: 1,
+    [TypesOfShifts.SECOND_SHIFT]: 2,
+    [TypesOfShifts.FULL_SHIFT]: 3,
+  };
   constructor(
     @InjectRepository(Office)
     private officesRepository: Repository<Office>,
     @Inject(forwardRef(() => DoctorsService))
     private readonly doctorsService: DoctorsService,
   ) {}
+
+  private sortDoctorsByShift(doctors: Doctor[]): Doctor[] {
+    return doctors.sort(
+      (a, b) =>
+        this.shiftOrder[a.typeOfShifts] - this.shiftOrder[b.typeOfShifts],
+    );
+  }
 
   async create(createOfficeDto: CreateOfficeDto) {
     const isOfficeNumberExist = await this.officesRepository.findOne({
@@ -124,6 +136,7 @@ export class OfficesService {
         'office.id',
         'office.number',
         'office.specialty',
+        'office.status',
         'doctor.id',
         'doctor.name',
         'doctor.surname',
@@ -140,6 +153,12 @@ export class OfficesService {
       });
     }
 
+    if (filters?.status) {
+      officeQuery.andWhere('office.status = :status', {
+        status: filters.status,
+      });
+    }
+
     const total = await officeQuery.getCount();
 
     officeQuery.take(perPage);
@@ -152,36 +171,45 @@ export class OfficesService {
         id: office.id,
         number: office.number,
         specialty: office.specialty,
-        doctors: office.doctors.map((doctor) => ({
+        doctors: this.sortDoctorsByShift(office.doctors).map((doctor) => ({
           fullName: `${doctor.surname} ${doctor.name} ${doctor.patronymic}`,
           typeOfShifts: doctor.typeOfShifts,
           id: doctor.id,
         })),
-        status: this.getOfficeStatus(office.doctors),
+        status: office.status,
       })),
       total,
     };
 
-    if (filters?.status) {
-      const filteredItems = getAllOfficeResponse.items.filter(
-        (item) => item.status === filters.status,
-      );
-      return {
-        total: filteredItems.length,
-        items: filteredItems,
-      };
-    }
-
     return getAllOfficeResponse;
   }
 
-  async findOne(officeId: string) {
+  async findOne(officeId?: string): Promise<Office | null> {
+    if (!officeId) {
+      return null;
+    }
     const office = await this.officesRepository
       .createQueryBuilder('office')
       .leftJoinAndSelect('office.doctors', 'doctor')
       .where('office.id = :officeId', { officeId })
       .getOne();
     return office;
+  }
+
+  async updateOfficeStatus(officeId: string) {
+    const office = await this.findOne(officeId);
+    const status = this.getOfficeStatus(office.doctors);
+    const result = await this.officesRepository.update(
+      { id: officeId },
+      {
+        status: status,
+      },
+    );
+
+    if (result.affected === 0) {
+      throw new NotFoundException(ErrorMessages.OFFICE_NOT_FOUND);
+    }
+    return result;
   }
 
   getOfficeStatus(doctors: Doctor[]) {

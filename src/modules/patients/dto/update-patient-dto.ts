@@ -1,13 +1,6 @@
 import { IsAlphaExtended } from '@/decorators/is-alpha-extended-decorator';
-import { Gender, TypeOfPatient } from '@/types';
-import {
-  IsDateString,
-  IsEnum,
-  IsOptional,
-  IsPhoneNumber,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { Gender, AgeCategory } from '@/types';
+import { IsDateString, IsEnum, IsOptional, IsUUID } from 'class-validator';
 
 export class UpdatePatientDto {
   @IsUUID('all')
@@ -26,15 +19,9 @@ export class UpdatePatientDto {
   @IsEnum(Gender)
   gender: Gender;
 
-  @IsEnum(TypeOfPatient)
-  ageCategory: TypeOfPatient;
+  @IsEnum(AgeCategory)
+  ageCategory: AgeCategory;
 
   @IsDateString()
   dateOfBirth: string;
-
-  @IsPhoneNumber('BY')
-  phone: string;
-
-  @IsString()
-  address: string;
 }

@@ -1,5 +1,5 @@
 import { Doctor } from '@/modules/doctors/models/doctor.entity';
-import { Specialty } from '@/types';
+import { Specialty, Status } from '@/types';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
@@ -18,4 +18,11 @@ export class Office {
 
   @OneToMany(() => Doctor, (doctor) => doctor.office)
   doctors: Doctor[];
+
+  @Column({
+    type: 'enum',
+    enum: Status,
+    default: Status.EMPTY,
+  })
+  status: Status;
 }

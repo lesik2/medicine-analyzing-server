@@ -71,7 +71,9 @@ export class DoctorsService {
   }
 
   async create(createDoctorDto: CreateDoctorDto) {
-    const office = await this.officeService.findOne(createDoctorDto.officeId);
+    const office: Office | null = await this.officeService.findOne(
+      createDoctorDto.officeId,
+    );
     if (office) {
       this.validateOffice(
         createDoctorDto.specialty,
@@ -101,8 +103,12 @@ export class DoctorsService {
       office: office,
       user: user,
     });
-
     const savedDoctor = await this.doctorsRepository.save(doctor);
+
+    if (office) {
+      await this.officeService.updateOfficeStatus(office.id);
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = savedDoctor.user;
     const updatedSavedDoctor = {
@@ -114,7 +120,9 @@ export class DoctorsService {
   }
 
   async update(updateDoctorDto: UpdateDoctorDto) {
-    const office = await this.officeService.findOne(updateDoctorDto.officeId);
+    const office: Office | null = await this.officeService.findOne(
+      updateDoctorDto.officeId,
+    );
 
     if (office) {
       this.validateOffice(
@@ -127,6 +135,7 @@ export class DoctorsService {
     const doctorData = await this.doctorsRepository
       .createQueryBuilder('doctor')
       .leftJoinAndSelect('doctor.user', 'user')
+      .leftJoinAndSelect('doctor.office', 'office')
       .where('doctor.id = :doctorId', { doctorId: updateDoctorDto.id })
       .getOne();
 
@@ -154,6 +163,10 @@ export class DoctorsService {
         specialty: updateDoctorDto.specialty,
         office: office,
       },
+    );
+
+    await this.officeService.updateOfficeStatus(
+      office ? office.id : doctorData.office.id,
     );
 
     if (result.affected === 0) {
@@ -186,6 +199,11 @@ export class DoctorsService {
     if (filters?.typeOfShifts) {
       doctorsQuery.andWhere('doctor.typeOfShifts = :typeOfShifts', {
         typeOfShifts: filters.typeOfShifts,
+      });
+    }
+    if (filters?.number) {
+      doctorsQuery.andWhere('office.number = :number', {
+        number: filters.number,
       });
     }
 

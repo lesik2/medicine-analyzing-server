@@ -4,9 +4,9 @@ export enum Roles {
   MANAGER = 'MANAGER',
 }
 
-export enum TypeOfPatient {
-  ADULT = 'Взрослый',
-  CHILD = 'Детский',
+export enum AgeCategory {
+  ADULT = 'взрослый',
+  CHILD = 'дети',
 }
 
 export enum Gender {
