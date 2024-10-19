@@ -1,5 +1,5 @@
 import { IsAlphaExtended } from '@/decorators/is-alpha-extended-decorator';
-import { Gender, AgeCategory } from '@/types';
+import { AgeCategory, Gender } from '@/types';
 import { IsDateString, IsEnum, IsOptional, IsUUID } from 'class-validator';
 
 export class UpdatePatientDto {
@@ -19,9 +19,9 @@ export class UpdatePatientDto {
   @IsEnum(Gender)
   gender: Gender;
 
-  @IsEnum(AgeCategory)
-  ageCategory: AgeCategory;
-
   @IsDateString()
   dateOfBirth: string;
+
+  @IsEnum(AgeCategory)
+  ageCategory: AgeCategory;
 }

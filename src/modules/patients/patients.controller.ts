@@ -19,6 +19,7 @@ import { ExcludeUserPassword } from '@/types/excludeUserPassword';
 import { Patient } from './models/patient.entity';
 import { UpdatePatientDto } from './dto/update-patient-dto';
 import { IdParams } from '@/types/params';
+import { ChangeActiveDto } from './dto/change-active-dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @AppRoles([Roles.USER])
@@ -37,6 +38,11 @@ export class PatientsController {
   @Patch()
   async update(@Body() updatePatientDto: UpdatePatientDto) {
     return await this.patientsService.update(updatePatientDto);
+  }
+
+  @Patch('/active')
+  async changeActive(@Body() changeActiveDto: ChangeActiveDto) {
+    return await this.patientsService.changeActive(changeActiveDto.id);
   }
 
   @Delete(':id')

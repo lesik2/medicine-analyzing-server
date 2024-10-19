@@ -12,6 +12,7 @@ import {
 @Injectable()
 export class IsAlphaExtendedConstraint implements ValidatorConstraintInterface {
   validate(value: string) {
+    if (!value) return true;
     return RegularExpressions.lettersEnglishAndCyrillic.test(value);
   }
 

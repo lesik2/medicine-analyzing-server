@@ -24,6 +24,9 @@ export class Patient {
   @Column({ nullable: true, default: null })
   patronymic: string | null;
 
+  @Column({ default: false })
+  active: boolean;
+
   @Column({
     type: 'enum',
     enum: Gender,

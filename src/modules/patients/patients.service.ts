@@ -30,15 +30,24 @@ export class PatientsService {
       createPatientDto.dateOfBirth,
       createPatientDto.ageCategory,
     );
+    const date = new Date(createPatientDto.dateOfBirth);
 
     const user = await this.usersService.findOne({ id: userId });
-
+    const amountOfPatient = await this.getAmountOfPatients(userId);
     const patient = this.patientsRepository.create({
-      ...createPatientDto,
+      gender: createPatientDto.gender,
+      name: createPatientDto.name,
+      surname: createPatientDto.surname,
+      patronymic: createPatientDto.patronymic,
+      ageCategory: createPatientDto.ageCategory,
+      dateOfBirth: date,
       user,
+      active: amountOfPatient === 0 ? true : false,
     });
 
-    return await this.patientsRepository.save(patient);
+    await this.patientsRepository.save(patient);
+
+    return { ...patient, user: undefined };
   }
 
   async delete(patientId: string) {
@@ -50,9 +59,20 @@ export class PatientsService {
   }
 
   async update(updatePatientDto: UpdatePatientDto) {
+    this.validatePatientAge(
+      updatePatientDto.dateOfBirth,
+      updatePatientDto.ageCategory,
+    );
+    const date = new Date(updatePatientDto.dateOfBirth);
     const result = await this.patientsRepository.update(
       { id: updatePatientDto.id },
-      updatePatientDto,
+      {
+        name: updatePatientDto.name,
+        surname: updatePatientDto.surname,
+        patronymic: updatePatientDto.patronymic,
+        gender: updatePatientDto.gender,
+        dateOfBirth: date,
+      },
     );
 
     if (result.affected === 0) {
@@ -64,19 +84,48 @@ export class PatientsService {
   async findAll(userId: string) {
     const patients = await this.patientsRepository.find({
       where: { user: { id: userId } },
+      order: {
+        dateOfBirth: 'ASC',
+      },
     });
+
+    moment.locale('ru');
+    const assignedPatients = new Set();
 
     return patientsProfile.map((profile) => {
       const patient = patients.find(
         (item) =>
-          item.ageCategory === profile.ageCategory && profile.patient === null,
+          item.ageCategory === profile.ageCategory &&
+          profile.patient === null &&
+          !assignedPatients.has(item.id),
       );
+
+      if (patient) {
+        assignedPatients.add(patient.id);
+
+        return {
+          ...profile,
+          patient: {
+            ...patient,
+            dateOfBirth: moment(patient.dateOfBirth).format('D MMMM YYYY [г.]'),
+            fullName: `${patient.surname} ${patient.name} ${patient.patronymic}`,
+          },
+        };
+      }
 
       return {
         ...profile,
-        patient: patient || null,
+        patient: null,
       };
     });
+  }
+
+  async getAmountOfPatients(userId: string) {
+    const patients = await this.patientsRepository.find({
+      where: { user: { id: userId } },
+    });
+
+    return patients.length;
   }
 
   async findOne(userId: string, patientId: string) {
@@ -90,11 +139,26 @@ export class PatientsService {
     return patient;
   }
 
+  async changeActive(patientId: string) {
+    const patients = await this.patientsRepository.find();
+
+    const updatedPatients = patients.map((patient) => {
+      if (patient.id === patientId) {
+        return { ...patient, active: true };
+      } else {
+        return { ...patient, active: false };
+      }
+    });
+
+    await Promise.all(
+      updatedPatients.map((patient) => this.patientsRepository.save(patient)),
+    );
+  }
+
   private validatePatientAge(
     dateOfBirth: string,
     ageCategory: AgeCategory,
   ): void {
-    console.log(moment);
     const birthDate = moment(dateOfBirth, moment.ISO_8601);
     const age = moment().diff(moment(birthDate), 'years');
 
