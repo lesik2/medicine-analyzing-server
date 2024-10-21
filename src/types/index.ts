@@ -26,12 +26,6 @@ export enum Status {
   EMPTY = 'Нет сотрудников',
 }
 
-// export enum TIME_OF_SHIFTS {
-//   FIRST_SHIFT = '8.00 - 13.00',
-//   SECOND_SHIFT = '14.00 - 18.50',
-//   FULL_SHIFT = '8.00 - 17.00',
-// }
-
 export enum Specialty {
   GENERAL_PRACTICE = 'Общая практика',
   OBSTETRICS = 'Акушерство и гинекология',

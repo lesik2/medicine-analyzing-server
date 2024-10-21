@@ -80,8 +80,27 @@ export class PatientsService {
     }
     return result;
   }
-
   async findAll(userId: string) {
+    const patients = await this.patientsRepository.find({
+      where: { user: { id: userId } },
+      order: {
+        dateOfBirth: 'ASC',
+      },
+    });
+
+    moment.locale('ru');
+
+    return patients.map((patient) => {
+      return {
+        id: patient.id,
+        active: patient.active,
+        dateOfBirth: moment(patient.dateOfBirth).format('D MMMM YYYY [г.]'),
+        fullName: `${patient.surname} ${patient.name} ${patient.patronymic}`,
+      };
+    });
+  }
+
+  async findAllPattern(userId: string) {
     const patients = await this.patientsRepository.find({
       where: { user: { id: userId } },
       order: {
@@ -128,9 +147,9 @@ export class PatientsService {
     return patients.length;
   }
 
-  async findOne(userId: string, patientId: string) {
+  async findOne(patientId: string) {
     const patient = await this.patientsRepository.findOne({
-      where: { user: { id: userId }, id: patientId },
+      where: { id: patientId },
     });
 
     if (!patient) {

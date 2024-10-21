@@ -175,6 +175,25 @@ export class DoctorsService {
     return result;
   }
 
+  async findDoctorsBySpecialty(specialty: Specialty) {
+    const doctorQuery = this.doctorsRepository
+      .createQueryBuilder('doctor')
+      .leftJoinAndSelect('doctor.office', 'office')
+      .where('doctor.specialty = :specialty', { specialty })
+      .select(['doctor', 'office.number']);
+
+    const doctors = await doctorQuery.getMany();
+
+    return doctors
+      .filter((doctor) => doctor.office)
+      .map((doctor) => ({
+        id: doctor.id,
+        fullName: `${doctor.surname} ${doctor.name} ${doctor.patronymic}`,
+        officeNumber: doctor.office ? doctor.office.number : null,
+        specialty: doctor.specialty,
+      }));
+  }
+
   async findAll(query: getAllDoctorsQuery): Promise<GetAllDoctorsResponse> {
     const { sortKey, sortDirection, page, perPage, filters } = query;
 
@@ -234,7 +253,22 @@ export class DoctorsService {
     return doctors.length > 0;
   }
 
-  async findOne(doctorId: string): Promise<DoctorResponse> {
+  async findDoctorById(doctorId: string) {
+    if (!doctorId) {
+      return null;
+    }
+    const doctor = await this.doctorsRepository.findOne({
+      where: { id: doctorId },
+    });
+    if (!doctor) {
+      throw new NotFoundException(ErrorMessages.DOCTOR_NOT_FOUND);
+    }
+    return doctor;
+  }
+
+  async findOneDoctorWithAvailableShifts(
+    doctorId: string,
+  ): Promise<DoctorResponse> {
     const doctorData = await this.doctorsRepository
       .createQueryBuilder('doctor')
       .leftJoinAndSelect('doctor.user', 'user')

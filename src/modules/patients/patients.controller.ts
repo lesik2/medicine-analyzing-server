@@ -50,16 +50,18 @@ export class PatientsController {
     return await this.patientsService.delete(id);
   }
 
+  @Get('/pattern')
+  async findAllPattern(@CurrentUser() user: ExcludeUserPassword) {
+    return await this.patientsService.findAllPattern(user.id);
+  }
+
   @Get()
   async findAll(@CurrentUser() user: ExcludeUserPassword) {
     return await this.patientsService.findAll(user.id);
   }
 
   @Get(':id')
-  async findOne(
-    @CurrentUser() user: ExcludeUserPassword,
-    @Param() params: IdParams,
-  ) {
-    return await this.patientsService.findOne(user.id, params.id);
+  async findOne(@Param() params: IdParams) {
+    return await this.patientsService.findOne(params.id);
   }
 }
