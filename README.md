@@ -12,3 +12,11 @@
 [Диаграмма us-case](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/Us-case.jpeg)
 
 [ERD-базы данных](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/ERD-DB.png)
+
+# User-flow
+
+[Пациент](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/user-flow(%D0%BF%D0%B0%D1%86%D0%B8%D0%B5%D0%BD%D1%82).drawio.png)
+
+[Главврач](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/user-flow(%D0%B3%D0%BB%D0%B0%D0%B2%D0%B2%D1%80%D0%B0%D1%87).drawio.png)
+
+[Врач](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/user-flow(%D0%B2%D1%80%D0%B0%D1%87).drawio.png)
