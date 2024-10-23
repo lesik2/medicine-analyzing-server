@@ -25,8 +25,8 @@ export class OfficesController {
   constructor(private readonly officeService: OfficesService) {}
 
   @Get()
-  async findAll(@Query() query: getAllOfficesQuery) {
-    return await this.officeService.findAll(query);
+  async findAllFilters(@Query() query: getAllOfficesQuery) {
+    return await this.officeService.findAllFilters(query);
   }
 
   @Get('/free')

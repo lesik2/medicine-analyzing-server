@@ -126,7 +126,16 @@ export class OfficesService {
     });
   }
 
-  async findAll(query: getAllOfficesQuery): Promise<GetAllOfficeResponse> {
+  async findAll() {
+    return await this.officesRepository
+      .createQueryBuilder('office')
+      .leftJoinAndSelect('office.doctors', 'doctor')
+      .getMany();
+  }
+
+  async findAllFilters(
+    query: getAllOfficesQuery,
+  ): Promise<GetAllOfficeResponse> {
     const { sortKey, sortDirection, page, perPage, filters } = query;
 
     const officeQuery = this.officesRepository

@@ -194,7 +194,9 @@ export class DoctorsService {
       }));
   }
 
-  async findAll(query: getAllDoctorsQuery): Promise<GetAllDoctorsResponse> {
+  async findAllFilters(
+    query: getAllDoctorsQuery,
+  ): Promise<GetAllDoctorsResponse> {
     const { sortKey, sortDirection, page, perPage, filters } = query;
 
     const doctorsQuery = this.doctorsRepository
@@ -243,6 +245,15 @@ export class DoctorsService {
       })),
       total,
     };
+  }
+
+  async findAll() {
+    const doctors = await this.doctorsRepository
+      .createQueryBuilder('doctor')
+      .leftJoinAndSelect('doctor.office', 'office')
+      .getMany();
+
+    return doctors.filter((doctor) => doctor.office);
   }
 
   async isOfficeIncludesDoctors(office: Office) {

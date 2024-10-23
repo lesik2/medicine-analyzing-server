@@ -5,6 +5,10 @@ export interface getTimeSlotsQuery {
   date: string;
 }
 
+export interface getWorkloadQuery {
+  workloadBy: 'doctors' | 'offices';
+}
+
 export interface AppointmentResponse {
   id: string;
   dateAndTime: string;

@@ -31,8 +31,8 @@ export class DoctorsController {
 
   @AppRoles([Roles.MANAGER])
   @Get()
-  async findAll(@Query() query: getAllDoctorsQuery) {
-    return await this.doctorsService.findAll(query);
+  async findAllFilters(@Query() query: getAllDoctorsQuery) {
+    return await this.doctorsService.findAllFilters(query);
   }
 
   @AppRoles([Roles.USER])
