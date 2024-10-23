@@ -20,3 +20,8 @@
 [Главврач](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/user-flow(%D0%B3%D0%BB%D0%B0%D0%B2%D0%B2%D1%80%D0%B0%D1%87).drawio.png)
 
 [Врач](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/user-flow(%D0%B2%D1%80%D0%B0%D1%87).drawio.png)
+
+# UI
+[client](https://github.com/lesik2/medicine-analyzing-client)
+[Карта экранов](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/%D0%9A%D0%B0%D1%80%D1%82%D0%B0%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%BE%D0%B2.png)
+[Карта экранов Фигма](https://www.figma.com/design/skQSrFh8lfGzwqUWq3hz8x/%D0%9A%D0%B0%D1%80%D1%82%D0%B0-%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%BE%D0%B2?node-id=0-1&t=cdteWzStABTyh2GU-1)
