@@ -14,6 +14,8 @@ import { UpdatePatientDto } from './dto/update-patient-dto';
 import * as moment from 'moment';
 import { patientsProfile } from './constants';
 
+moment.locale('ru');
+
 @Injectable()
 export class PatientsService {
   constructor(
@@ -88,8 +90,6 @@ export class PatientsService {
       },
     });
 
-    moment.locale('ru');
-
     return patients.map((patient) => {
       return {
         id: patient.id,
@@ -108,7 +108,6 @@ export class PatientsService {
       },
     });
 
-    moment.locale('ru');
     const assignedPatients = new Set();
 
     return patientsProfile.map((profile) => {

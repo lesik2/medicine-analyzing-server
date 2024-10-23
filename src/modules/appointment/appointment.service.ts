@@ -13,7 +13,7 @@ import { getTimeOfShifts } from '@/common/getTimeOfShifts';
 import { getTimeForCareOfSpecialty } from '@/common/getTimeForCareOfSpecialty';
 import { CreateAppointmentDto } from './dto/create-appointment-dto';
 import { PatientsService } from '../patients/patients.service';
-import { daysOfWeekRu, FULL_DATE_MOMENT_FORMAT } from '@/common/date';
+import { FULL_DATE_MOMENT_FORMAT } from '@/common/date';
 import { TypesOfShifts } from '@/types';
 import { Doctor } from '../doctors/models/doctor.entity';
 import { OfficesService } from '../offices/offices.service';
@@ -137,10 +137,8 @@ export class AppointmentService {
       const dayOfMonth = startDate.date();
       const dayOfWeek = startDate.format('ddd');
 
-      const dayOfWeekRu = daysOfWeekRu[dayOfWeek];
-
       workloadResults.push({
-        label: `${dayOfMonth} ${dayOfWeekRu}`,
+        label: `${dayOfMonth} ${dayOfWeek}`,
         value: averageWorkload,
       });
 
@@ -187,10 +185,9 @@ export class AppointmentService {
 
       const dayOfMonth = startDate.date();
       const dayOfWeek = startDate.format('ddd');
-      const dayOfWeekRu = daysOfWeekRu[dayOfWeek];
 
       workloadResults.push({
-        label: `${dayOfMonth} ${dayOfWeekRu}`,
+        label: `${dayOfMonth} ${dayOfWeek}`,
         value: averageWorkload,
       });
 
