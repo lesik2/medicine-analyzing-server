@@ -19,6 +19,9 @@ import { Conclusion } from '../care-patient/models/conclusion.entity';
 import { Reception } from '../care-patient/models/reception.entity';
 import { Appointment } from '../appointment/models/appointment.entity';
 import { TimeTracking } from '../time-tracking/modules/time-tracking.entity';
+import { OfficesModule } from '../offices/offices.module';
+import { DoctorsModule } from '../doctors/doctors.module';
+import { AppointmentModule } from '../appointment/appointment.module';
 
 @Module({
   imports: [
@@ -91,6 +94,9 @@ import { TimeTracking } from '../time-tracking/modules/time-tracking.entity';
     AuthModule,
     MailModule,
     PatientsModule,
+    OfficesModule,
+    DoctorsModule,
+    AppointmentModule,
   ],
   controllers: [],
   providers: [],

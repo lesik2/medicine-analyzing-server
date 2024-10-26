@@ -8,12 +8,13 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { TokenPayload } from './interfaces/token-payload.interface';
-import { CreateUserDto } from '../users/dto/create-user-dto';
 import { ErrorMessages } from '@/common/error-messages';
 import { MailService } from '../mail/mail.service';
 import { confirmationMailSubject, resetPasswordMailSubject } from './constants';
 import { RestorePasswordDto } from './dto/restore-password-dto';
 import { ExcludeUserPassword } from '@/types/excludeUserPassword';
+import { CreateUser } from '../users/types';
+import { Roles } from '@/types';
 
 @Injectable()
 export class AuthService {
@@ -24,25 +25,39 @@ export class AuthService {
     private readonly mailService: MailService,
   ) {}
 
-  async signUp(createUserDto: CreateUserDto): Promise<any> {
+  async signUp(createUser: CreateUser): Promise<ExcludeUserPassword> {
     const userExists = await this.usersService.findOne({
-      email: createUserDto.email,
+      email: createUser.email,
     });
 
     if (userExists) {
       throw new BadRequestException(ErrorMessages.USER_ALREADY_EXIST);
     }
-    const newUser = await this.usersService.create(createUserDto);
+    const newUser = await this.usersService.create(createUser);
     const tokens = await this.getTokens(newUser);
     await this.updateRefreshToken(newUser.id, tokens.refreshToken);
-    this.mailService.sendMail({
-      to: newUser.email,
-      subject: confirmationMailSubject,
-      template: 'confirmationEmail',
-      context: {
-        confirm_link: `${this.configService.get('email_confirmation_url')}?token=${tokens.refreshToken}`,
-      },
-    });
+    if (createUser.role === Roles.DOCTOR) {
+      this.mailService.sendMail({
+        to: newUser.email,
+        subject: confirmationMailSubject,
+        template: 'createDoctor',
+        context: {
+          confirm_link: `${this.configService.get('email_confirmation_url')}?token=${tokens.refreshToken}`,
+          email: newUser.email,
+          password: createUser.password,
+        },
+      });
+    } else {
+      this.mailService.sendMail({
+        to: newUser.email,
+        subject: confirmationMailSubject,
+        template: 'confirmationEmail',
+        context: {
+          confirm_link: `${this.configService.get('email_confirmation_url')}?token=${tokens.refreshToken}`,
+        },
+      });
+    }
+
     return newUser;
   }
 
@@ -198,5 +213,31 @@ export class AuthService {
       throw new UnauthorizedException(ErrorMessages.WRONG_SIGN_IN_MESSAGE);
     }
     return this.usersService.excludePasswordFromUser(user);
+  }
+
+  generateStrongPassword(length = 12) {
+    if (length < 6 || length > 64) {
+      throw new Error('Password length must be between 6 and 64 characters.');
+    }
+
+    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const symbols = '!@#$%^&*()_+[]{}|;:,.<>?';
+
+    const passwordArray = [
+      lowercase[Math.floor(Math.random() * lowercase.length)],
+      uppercase[Math.floor(Math.random() * uppercase.length)],
+      symbols[Math.floor(Math.random() * symbols.length)],
+    ];
+
+    const allCharacters = lowercase + uppercase + symbols;
+    for (let i = 3; i < length; i++) {
+      passwordArray.push(
+        allCharacters[Math.floor(Math.random() * allCharacters.length)],
+      );
+    }
+
+    const password = passwordArray.sort(() => Math.random() - 0.5).join('');
+    return password;
   }
 }

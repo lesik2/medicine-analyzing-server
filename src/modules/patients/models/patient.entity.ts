@@ -1,7 +1,7 @@
 import { Appointment } from '@/modules/appointment/models/appointment.entity';
 import { CarePatient } from '@/modules/care-patient/models/care-patient.entity';
 import { User } from '@/modules/users/models/user.entity';
-import { Gender, TypeOfPatient } from '@/types';
+import { Gender, AgeCategory } from '@/types';
 import {
   Entity,
   Column,
@@ -24,6 +24,9 @@ export class Patient {
   @Column({ nullable: true, default: null })
   patronymic: string | null;
 
+  @Column({ default: false })
+  active: boolean;
+
   @Column({
     type: 'enum',
     enum: Gender,
@@ -32,23 +35,14 @@ export class Patient {
 
   @Column({
     type: 'enum',
-    enum: TypeOfPatient,
+    enum: AgeCategory,
   })
-  ageCategory: TypeOfPatient;
+  ageCategory: AgeCategory;
 
   @Column({
     type: 'date',
   })
   dateOfBirth: Date;
-
-  @Column()
-  phone: string;
-
-  @Column()
-  locality: string;
-
-  @Column()
-  address: string;
 
   @ManyToOne(() => User, (user) => user.patients)
   user: User;

@@ -4,9 +4,9 @@ export enum Roles {
   MANAGER = 'MANAGER',
 }
 
-export enum TypeOfPatient {
-  ADULT = 'Взрослый',
-  CHILD = 'Детский',
+export enum AgeCategory {
+  ADULT = 'взрослый',
+  CHILD = 'дети',
 }
 
 export enum Gender {
@@ -14,36 +14,21 @@ export enum Gender {
   FEMALE = 'Женский',
 }
 
-export enum TYPES_OF_SHIFTS {
+export enum TypesOfShifts {
   FIRST_SHIFT = 'Первая смена',
   SECOND_SHIFT = 'Вторая смена',
   FULL_SHIFT = 'Полная смена',
 }
 
-export enum TIME_OF_SHIFTS {
-  FIRST_SHIFT = '8.00 - 13.00',
-  SECOND_SHIFT = '14.00 - 18.50',
-  FULL_SHIFT = '8.00 - 17.00',
+export enum Status {
+  FILLED = 'Полный состав',
+  PARTIALLY_FILLED = 'Один сотрудник',
+  EMPTY = 'Нет сотрудников',
 }
 
 export enum Specialty {
-  GENERAL_PRACTICE = 'Врач общей практики',
-  OBSTETRICS = 'Врач-акушер-гинеколог',
-  SURGERY = 'Врач-хирург',
-  DENTISTRY = 'Врач-стоматолог',
-  THERAPY = 'Врач-терапевт',
-  OPHTHALMOLOGY = 'Врач-офтальмолог',
-  PEDIATRICS = 'Врач-педиатр',
-  CARDIOLOGY = 'Врач-кардиолог',
-  NEUROLOGY = 'Врач-невролог',
-  ENDOCRINOLOGY = 'Врач-эндокринолог',
-  DERMATOLOGY = 'Врач-дерматолог',
-  MENTAL_HEALTH = 'Врач-психиатр',
-}
-
-export enum Departments {
   GENERAL_PRACTICE = 'Общая практика',
-  OBSTETRICS = 'Акушер-гинекология',
+  OBSTETRICS = 'Акушерство и гинекология',
   SURGERY = 'Хирургия',
   DENTISTRY = 'Стоматология',
   THERAPY = 'Терапия',
@@ -55,6 +40,7 @@ export enum Departments {
   DERMATOLOGY = 'Дерматология',
   MENTAL_HEALTH = 'Психиатрия',
 }
+
 export enum AnalysisTypes {
   GENERAL_BLOOD_TEST = 'Общий анализ крови',
   VENOUS_BLOOD_TEST = 'Анализ крови из вены',

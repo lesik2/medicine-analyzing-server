@@ -1,0 +1,1 @@
+export const FULL_DATE_MOMENT_FORMAT = 'D MMMM YYYY, HH:mm';

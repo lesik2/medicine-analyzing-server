@@ -7,13 +7,8 @@ export class Appointment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'time' })
-  time: string;
-
-  @Column({
-    type: 'date',
-  })
-  date: Date;
+  @Column({ type: 'timestamp', nullable: false })
+  dateAndTime: Date;
 
   @ManyToOne(() => Doctor, (doctor) => doctor.appointments)
   doctor: Doctor;

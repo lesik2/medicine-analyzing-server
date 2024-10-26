@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user-dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './models/user.entity';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ExcludeUserPassword } from '@/types/excludeUserPassword';
+import { CreateUser } from './types';
+import { Roles } from '@/types';
 
 @Injectable()
 export class UsersService {
@@ -29,16 +30,17 @@ export class UsersService {
 
   excludePasswordFromUser(user: User): ExcludeUserPassword {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    const { password, ...lastUser } = user;
+    return lastUser;
   }
 
-  async create(requestUser: CreateUserDto): Promise<ExcludeUserPassword> {
+  async create(requestUser: CreateUser): Promise<ExcludeUserPassword> {
     const user = this.usersRepository.create({
       email: requestUser.email,
       password: await this.encryptData(requestUser.password),
       name: requestUser.name,
       surname: requestUser.surname,
+      role: requestUser.role || Roles.USER,
     });
 
     const savedUser = await this.usersRepository.save(user);
