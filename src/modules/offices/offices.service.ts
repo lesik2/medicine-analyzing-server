@@ -9,17 +9,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Office } from './models/office.entity';
 import { ErrorMessages } from '@/common/error-messages';
-import {
-  FreeOffice,
-  GetAllOfficeResponse,
-  getAllOfficesQuery,
-  getFreeOfficesQuery,
-} from './types';
+import { FreeOffice, GetAllOfficeResponse, getFreeOfficesQuery } from './types';
 import { CreateOfficeDto } from './dto/create-office-dto';
 import { Status, TypesOfShifts } from '@/types';
 import { UpdateOfficeDto } from './dto/update-office-dto';
 import { DoctorsService } from '../doctors/doctors.service';
 import { Doctor } from '../doctors/models/doctor.entity';
+import { GetAllOfficesQueryDto } from './dto/get-all-offices-query-dto';
 
 @Injectable()
 export class OfficesService {
@@ -134,7 +130,7 @@ export class OfficesService {
   }
 
   async findAllFilters(
-    query: getAllOfficesQuery,
+    query: GetAllOfficesQueryDto,
   ): Promise<GetAllOfficeResponse> {
     const { sortKey, sortDirection, page, perPage, filters } = query;
 

@@ -12,8 +12,8 @@ export interface getAllOfficesQuery {
   page: number;
   perPage: number;
   filters?: {
-    status: Status;
-    specialty: Specialty;
+    status?: Status;
+    specialty?: Specialty;
   };
 }
 

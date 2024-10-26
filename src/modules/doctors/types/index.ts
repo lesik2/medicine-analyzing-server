@@ -20,9 +20,9 @@ export interface getAllDoctorsQuery {
   page: number;
   perPage: number;
   filters?: {
-    typeOfShifts: TypesOfShifts;
-    specialty: Specialty;
-    number: number;
+    typeOfShifts?: TypesOfShifts;
+    specialty?: Specialty;
+    number?: number;
   };
 }
 
