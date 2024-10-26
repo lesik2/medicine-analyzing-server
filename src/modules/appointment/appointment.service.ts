@@ -107,7 +107,7 @@ export class AppointmentService {
       return await this.getOfficesWorkLoad(startDate, endDate, appointments);
     }
 
-    new BadRequestException();
+    throw new BadRequestException();
   }
 
   async getDoctorsWorkLoad(
