@@ -30,3 +30,6 @@
 
 # Swagger API
 [JSON файл api](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/openapi.json)
+
+# Tests
+[Процент покрытия тестами](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/test-coverage.png)
