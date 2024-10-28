@@ -7,7 +7,6 @@ import { AgeCategory, Gender, Roles } from '../../types/index';
 import { BadRequestException } from '@nestjs/common';
 import { ErrorMessages } from '../../common/error-messages';
 import * as moment from 'moment';
-import { Patient } from './models/patient.entity';
 import { CreatePatientDto } from './dto/create-patient-dto';
 import { patientsProfile } from './constants';
 
