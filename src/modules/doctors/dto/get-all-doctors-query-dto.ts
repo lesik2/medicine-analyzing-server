@@ -39,14 +39,12 @@ export class GetAllDoctorsQueryDto {
     description: 'The page number for pagination.',
     example: 1,
   })
-  @IsNumber()
   page: number;
 
   @ApiProperty({
     description: 'The number of offices per page.',
     example: 10,
   })
-  @IsNumber()
   perPage: number;
 
   @ApiPropertyOptional({

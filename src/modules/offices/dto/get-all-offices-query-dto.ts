@@ -1,7 +1,7 @@
 import { Specialty, Status } from '@/types';
 import { SortDirection } from '@/types/sortDirection';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class FiltersDto {
   @ApiPropertyOptional({
@@ -45,14 +45,12 @@ export class GetAllOfficesQueryDto {
     description: 'The page number for pagination.',
     example: 1,
   })
-  @IsNumber()
   page: number;
 
   @ApiProperty({
     description: 'The number of offices per page.',
     example: 10,
   })
-  @IsNumber()
   perPage: number;
 
   @ApiPropertyOptional({

@@ -13,6 +13,7 @@ import { UsersService } from '../users/users.service';
 import { UpdatePatientDto } from './dto/update-patient-dto';
 import * as moment from 'moment';
 import { patientsProfile } from './constants';
+import { PatientResponseDto } from './dto/patient-response-dto';
 
 moment.locale('ru');
 
@@ -82,7 +83,7 @@ export class PatientsService {
     }
     return result;
   }
-  async findAll(userId: string) {
+  async findAll(userId: string): Promise<PatientResponseDto[]> {
     const patients = await this.patientsRepository.find({
       where: { user: { id: userId } },
       order: {
@@ -173,14 +174,11 @@ export class PatientsService {
     );
   }
 
-  private validatePatientAge(
-    dateOfBirth: string,
-    ageCategory: AgeCategory,
-  ): void {
+  validatePatientAge(dateOfBirth: string, ageCategory: AgeCategory): void {
     const birthDate = moment(dateOfBirth, moment.ISO_8601);
     const age = moment().diff(moment(birthDate), 'years');
 
-    if (ageCategory === AgeCategory.CHILD && age > 18) {
+    if (ageCategory === AgeCategory.CHILD && age >= 18) {
       throw new BadRequestException(ErrorMessages.PATIENT_CHILD_OLDER_ERROR);
     }
 
