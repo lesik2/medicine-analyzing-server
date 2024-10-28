@@ -31,7 +31,7 @@ export class OfficesService {
     private readonly doctorsService: DoctorsService,
   ) {}
 
-  private sortDoctorsByShift(doctors: Doctor[]): Doctor[] {
+  sortDoctorsByShift(doctors: Doctor[]): Doctor[] {
     return doctors.sort(
       (a, b) =>
         this.shiftOrder[a.typeOfShifts] - this.shiftOrder[b.typeOfShifts],

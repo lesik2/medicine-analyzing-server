@@ -11,6 +11,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('MEDICINE_ANALYZING_SERVER_API')
     .setVersion('1.0')
+    .addBearerAuth()
     .addTag('auth')
     .addTag('offices')
     .addTag('doctors')

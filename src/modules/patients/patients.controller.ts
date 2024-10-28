@@ -23,7 +23,7 @@ import { UpdatePatientDto } from './dto/update-patient-dto';
 import { IdParams } from '@/types/params';
 import { ChangeActiveDto } from './dto/change-active-dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { PatientsResponseDto } from './dto/patients-response-dto';
+import { PatientResponseDto } from './dto/patient-response-dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @AppRoles([Roles.USER])
@@ -84,6 +84,7 @@ export class PatientsController {
     return await this.patientsService.delete(id);
   }
 
+  @ApiOperation({ summary: 'Retrieve patients pattern' })
   @Get('/pattern')
   async findAllPattern(@CurrentUser() user: ExcludeUserPassword) {
     return await this.patientsService.findAllPattern(user.id);
@@ -94,7 +95,7 @@ export class PatientsController {
   @ApiResponse({
     status: 200,
     description: 'List of patients retrieved successfully.',
-    type: PatientsResponseDto,
+    type: [PatientResponseDto],
   })
   async findAll(@CurrentUser() user: ExcludeUserPassword) {
     return await this.patientsService.findAll(user.id);

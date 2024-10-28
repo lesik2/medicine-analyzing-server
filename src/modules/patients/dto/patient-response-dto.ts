@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class PatientDto {
+export class PatientResponseDto {
   @ApiProperty({
     description: 'The unique identifier of the patient.',
     example: 'e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56',
