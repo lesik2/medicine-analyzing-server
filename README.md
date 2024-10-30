@@ -40,9 +40,9 @@
 
 [Диаграмма последовательности](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/sequence.jpeg)
 
-[Алгоритм](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/algotithm.jpeg)
+[Алгоритм](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/algorithm.jpeg)
 
 [Архитектура](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/architecture.jpeg)
 
-[Диаграмма развертывания](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/deplloyments.jpeg)
+[Диаграмма развертывания](https://github.com/lesik2/medicine-analyzing-server/blob/main/docs/deployments.jpeg)
 
