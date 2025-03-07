@@ -11,6 +11,7 @@ import { ExcludeUserPassword } from '@/types/excludeUserPassword';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetTimeSlotsQueryDto } from './dto/get-time-slots-query-dto';
 import { AppointmentResponseByPatientDto } from './dto/appointment-response-by-patient-dto';
+import { Appointment } from './models/appointment.entity';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('appointment')
@@ -42,8 +43,12 @@ export class AppointmentController {
 
   @Post()
   @AppRoles([Roles.USER])
-  async create(@Body() createAppointmentDto: CreateAppointmentDto) {
+  async create(
+    @CurrentUser() user: ExcludeUserPassword, // Get current user
+    @Body() createAppointmentDto: CreateAppointmentDto,
+  ): Promise<Appointment> {
     return await this.appointmentService.createAppointmentDto(
+      user,
       createAppointmentDto,
     );
   }

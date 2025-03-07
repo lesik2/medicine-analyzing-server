@@ -18,6 +18,9 @@ import { TypesOfShifts } from '@/types';
 import { Doctor } from '../doctors/models/doctor.entity';
 import { OfficesService } from '../offices/offices.service';
 import { Office } from '../offices/models/office.entity';
+import { MailService } from '../mail/mail.service';
+import { ExcludeUserPassword } from '@/types/excludeUserPassword';
+import { appointmentConfirmationMailSubject } from '../auth/constants';
 
 @Injectable()
 export class AppointmentService {
@@ -27,9 +30,13 @@ export class AppointmentService {
     private readonly doctorsService: DoctorsService,
     private readonly patientsService: PatientsService,
     private readonly officesService: OfficesService,
+    private readonly mailService: MailService,
   ) {}
 
-  async createAppointmentDto(createAppointmentDto: CreateAppointmentDto) {
+  async createAppointmentDto(
+    user: ExcludeUserPassword,
+    createAppointmentDto: CreateAppointmentDto,
+  ) {
     const { patientId, doctorId, dateAndTime } = createAppointmentDto;
 
     const doctor = await this.doctorsService.findDoctorById(doctorId);
@@ -41,11 +48,36 @@ export class AppointmentService {
       dateAndTime,
     });
 
-    return await this.appointmentRepository.save(appointment);
+    const savedAppointment = await this.appointmentRepository.save(appointment);
+
+    this.mailService.sendMail({
+      to: user.email,
+      subject: appointmentConfirmationMailSubject,
+      template: 'createAppointment',
+      context: {
+        patientName: patient.name,
+        patientSurname: patient.surname,
+        patientPatronymic: patient.patronymic,
+        appointmentTime: moment(dateAndTime).format('D MMMM YYYY HH:mm'),
+        doctorFullName: `${doctor.surname} ${doctor.name} ${doctor.patronymic}`,
+        doctorSpecialty: doctor.specialty,
+        officeNumber: doctor.office.number.toString(),
+      },
+    });
+
+    return savedAppointment;
   }
 
   async getAppointments(userId: string): Promise<AppointmentResponseByPatient> {
     const patients = await this.patientsService.findAll(userId);
+
+    if (patients.length === 0) {
+      return {
+        upcoming: [],
+        history: [],
+      };
+    }
+
     const todayStart = moment().startOf('day').toDate();
 
     const patientIds = patients.map((patient) => patient.id);

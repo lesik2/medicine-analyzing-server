@@ -270,6 +270,7 @@ export class DoctorsService {
     }
     const doctor = await this.doctorsRepository.findOne({
       where: { id: doctorId },
+      relations: ['office'],
     });
     if (!doctor) {
       throw new NotFoundException(ErrorMessages.DOCTOR_NOT_FOUND);

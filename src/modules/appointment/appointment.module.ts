@@ -6,10 +6,11 @@ import { Appointment } from './models/appointment.entity';
 import { DoctorsModule } from '../doctors/doctors.module';
 import { PatientsModule } from '../patients/patients.module';
 import { OfficesModule } from '../offices/offices.module';
+import { MailService } from '../mail/mail.service';
 
 @Module({
   controllers: [AppointmentController],
-  providers: [AppointmentService],
+  providers: [AppointmentService, MailService],
   exports: [AppointmentService],
   imports: [
     TypeOrmModule.forFeature([Appointment]),
