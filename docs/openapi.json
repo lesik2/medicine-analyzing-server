@@ -1,0 +1,1842 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/users": {
+      "get": {
+        "operationId": "UsersController_getUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "summary": "User login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "User login credentials",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Invalid email or password."
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/resend": {
+      "post": {
+        "operationId": "AuthController_resendConfirmationEmail",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/recall": {
+      "post": {
+        "operationId": "AuthController_sendEmailForRestorePassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/restore": {
+      "post": {
+        "operationId": "AuthController_restorePassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestorePasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "operationId": "AuthController_signup",
+        "summary": "Register a new user",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExcludeUserResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. The provided data is invalid."
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "get": {
+        "operationId": "AuthController_refreshTokens",
+        "summary": "Refresh access tokens",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Tokens successfully refreshed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Invalid refresh token or user not authenticated."
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/patients": {
+      "post": {
+        "operationId": "PatientsController_create",
+        "summary": "Create a new patient",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePatientDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The patient has been successfully created."
+          },
+          "400": {
+            "description": "Bad Request. The input data is invalid."
+          },
+          "401": {
+            "description": "Unauthorized. User needs to be authenticated."
+          }
+        },
+        "tags": [
+          "patients"
+        ]
+      },
+      "patch": {
+        "operationId": "PatientsController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePatientDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "patients"
+        ]
+      },
+      "get": {
+        "operationId": "PatientsController_findAll",
+        "summary": "Retrieve all patients",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of patients retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientsResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "patients"
+        ]
+      }
+    },
+    "/patients/active": {
+      "patch": {
+        "operationId": "PatientsController_changeActive",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeActiveDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "patients"
+        ]
+      }
+    },
+    "/patients/{id}": {
+      "delete": {
+        "operationId": "PatientsController_delete",
+        "summary": "Delete a specific patient by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The unique identifier of the patient to be deleted.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Patient deleted successfully."
+          },
+          "404": {
+            "description": "Not Found. Patient with the specified ID does not exist."
+          }
+        },
+        "tags": [
+          "patients"
+        ]
+      },
+      "get": {
+        "operationId": "PatientsController_findOne",
+        "summary": "Retrieve a specific patient by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The unique identifier of the patient.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found. Patient with the specified ID does not exist."
+          }
+        },
+        "tags": [
+          "patients"
+        ]
+      }
+    },
+    "/patients/pattern": {
+      "get": {
+        "operationId": "PatientsController_findAllPattern",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "patients"
+        ]
+      }
+    },
+    "/offices": {
+      "get": {
+        "operationId": "OfficesController_findAllFilters",
+        "summary": "Retrieve all offices with optional filters",
+        "parameters": [
+          {
+            "name": "sortKey",
+            "required": false,
+            "in": "query",
+            "description": "The key to sort the offices by.",
+            "schema": {
+              "example": "specialty",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "description": "The direction to sort the offices. Can be \"ASC\" or \"DESC\".",
+            "schema": {
+              "example": "ASC",
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "description": "The page number for pagination.",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "perPage",
+            "required": true,
+            "in": "query",
+            "description": "The number of offices per page.",
+            "schema": {
+              "example": 10,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of offices retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllOfficeResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. The input data is invalid."
+          },
+          "404": {
+            "description": "Not Found. No offices match the provided filters."
+          }
+        },
+        "tags": [
+          "offices"
+        ]
+      },
+      "post": {
+        "operationId": "OfficesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOfficeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "offices"
+        ]
+      },
+      "patch": {
+        "operationId": "OfficesController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOfficeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "offices"
+        ]
+      }
+    },
+    "/offices/free": {
+      "get": {
+        "operationId": "OfficesController_findFreeOffices",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "offices"
+        ]
+      }
+    },
+    "/offices/{id}": {
+      "get": {
+        "operationId": "OfficesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The unique identifier of the office.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Office retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Office"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found. Office with the specified ID does not exist."
+          }
+        },
+        "tags": [
+          "offices"
+        ]
+      }
+    },
+    "/doctors": {
+      "post": {
+        "operationId": "DoctorsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDoctorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "doctors"
+        ]
+      },
+      "get": {
+        "operationId": "DoctorsController_findAllFilters",
+        "summary": "Retrieve all doctors with optional filters",
+        "parameters": [
+          {
+            "name": "sortKey",
+            "required": false,
+            "in": "query",
+            "description": "The key to sort the offices by.",
+            "schema": {
+              "example": "specialty",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "description": "The direction to sort the offices. Can be \"ASC\" or \"DESC\".",
+            "schema": {
+              "example": "ASC",
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "description": "The page number for pagination.",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "perPage",
+            "required": true,
+            "in": "query",
+            "description": "The number of offices per page.",
+            "schema": {
+              "example": 10,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of doctors retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllDoctorsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. The input data is invalid."
+          },
+          "404": {
+            "description": "Not Found. No doctors match the provided filters."
+          }
+        },
+        "tags": [
+          "doctors"
+        ]
+      },
+      "patch": {
+        "operationId": "DoctorsController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDoctorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
+    "/doctors/specialty/{specialty}": {
+      "get": {
+        "operationId": "DoctorsController_findDoctorsBySpecialty",
+        "summary": "Retrieve doctors by specialty",
+        "parameters": [
+          {
+            "name": "specialty",
+            "required": true,
+            "in": "path",
+            "description": "The specialty of the doctors to retrieve.",
+            "schema": {
+              "enum": [
+                "Общая практика",
+                "Акушерство и гинекология",
+                "Хирургия",
+                "Стоматология",
+                "Терапия",
+                "Офтальмология",
+                "Педиатрия",
+                "Кардиология",
+                "Неврология",
+                "Эндокринология",
+                "Дерматология",
+                "Психиатрия"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of doctors retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DoctorResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No doctors found for the specified specialty."
+          }
+        },
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
+    "/doctors/{id}": {
+      "get": {
+        "operationId": "DoctorsController_findOne",
+        "summary": "Retrieve a specific doctor by ID along with their available shifts",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The unique identifier of the doctor.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Doctor retrieved successfully, along with available shifts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found. Doctor with the specified ID does not exist."
+          }
+        },
+        "tags": [
+          "doctors"
+        ]
+      }
+    },
+    "/appointment": {
+      "get": {
+        "operationId": "AppointmentController_getTimeSlots",
+        "summary": "Retrieve available time slots",
+        "parameters": [
+          {
+            "name": "doctorId",
+            "required": true,
+            "in": "query",
+            "description": "The unique identifier of the doctor.",
+            "schema": {
+              "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56",
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "required": true,
+            "in": "query",
+            "description": "The date for which to retrieve available time slots in ISO format.",
+            "schema": {
+              "example": "2024-10-25",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of available time slots retrieved successfully.",
+            "content": {
+              "application/json": {
+                "example": [
+                  "12:30",
+                  "12:45",
+                  "13:00"
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "No available time slots found for the specified criteria."
+          }
+        },
+        "tags": [
+          "appointment"
+        ]
+      },
+      "post": {
+        "operationId": "AppointmentController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAppointmentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "appointment"
+        ]
+      }
+    },
+    "/appointment/workload": {
+      "get": {
+        "operationId": "AppointmentController_getWorkload",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "appointment"
+        ]
+      }
+    },
+    "/appointment/patients": {
+      "get": {
+        "operationId": "AppointmentController_getAppointments",
+        "summary": "Retrieve all appointments for the current user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Appointments retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppointmentResponseByPatientDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No appointments found for the specified user."
+          }
+        },
+        "tags": [
+          "appointment"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "MEDICINE_ANALYZING_SERVER_API",
+    "description": "",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "auth",
+      "description": ""
+    },
+    {
+      "name": "offices",
+      "description": ""
+    },
+    {
+      "name": "doctors",
+      "description": ""
+    },
+    {
+      "name": "patients",
+      "description": ""
+    },
+    {
+      "name": "appointment",
+      "description": ""
+    }
+  ],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "LoginRequestDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "The email address of the user. Must be a valid email format.",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "The password of the user. Must be at least 6 characters long.",
+            "example": "Password123!"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "LoginResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the user.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the user.",
+            "example": "Алексей"
+          },
+          "surname": {
+            "type": "string",
+            "description": "The surname of the user.",
+            "example": "Пухальский"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address of the user.",
+            "example": "lesikpuhalskij@gmail.com"
+          },
+          "isEmailConfirmed": {
+            "type": "boolean",
+            "description": "Indicates if the user has confirmed their email.",
+            "example": false
+          },
+          "role": {
+            "type": "string",
+            "description": "The role assigned to the user.",
+            "example": "USER"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "The access token for the user.",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "The refresh token for the user.",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "surname",
+          "email",
+          "isEmailConfirmed",
+          "role",
+          "accessToken",
+          "refreshToken"
+        ]
+      },
+      "EmailDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "The email address of the user. Must be a valid email format and at least 6 characters long.",
+            "example": "user@example.com"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "RestorePasswordDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "The token for password restoration, usually sent to the user’s email.",
+            "example": "abc123token456"
+          },
+          "userId": {
+            "type": "string",
+            "description": "The unique identifier of the user requesting the password reset.",
+            "example": "user-id-12345"
+          },
+          "newPassword": {
+            "type": "string",
+            "description": "The new password for the user. Must be between 6 and 64 characters long and include at least one lowercase letter, one uppercase letter, and one symbol.",
+            "example": "NewPassword123!"
+          }
+        },
+        "required": [
+          "token",
+          "userId",
+          "newPassword"
+        ]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The first name of the user. Only alphabetic characters are allowed.",
+            "example": "Алексей"
+          },
+          "surname": {
+            "type": "string",
+            "description": "The surname of the user. Only alphabetic characters are allowed.",
+            "example": "Пухальский"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address of the user. Must be unique and in a valid format. Minimum length is 6 characters.",
+            "example": "lesikpuhalskij@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "The password for the user account. It must be between 6 and 64 characters long and include at least one lowercase letter, one uppercase letter, and one symbol.",
+            "example": "Alex1234!"
+          }
+        },
+        "required": [
+          "name",
+          "surname",
+          "email",
+          "password"
+        ]
+      },
+      "ExcludeUserResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the user.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the user.",
+            "example": "Алексей"
+          },
+          "surname": {
+            "type": "string",
+            "description": "The surname of the user.",
+            "example": "Пухальский"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address of the user.",
+            "example": "lesikpuhalskij@gmail.com"
+          },
+          "isEmailConfirmed": {
+            "type": "boolean",
+            "description": "Indicates if the user has confirmed their email.",
+            "example": false
+          },
+          "role": {
+            "type": "string",
+            "description": "The role assigned to the user.",
+            "example": "USER"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "surname",
+          "email",
+          "isEmailConfirmed",
+          "role"
+        ]
+      },
+      "TokenResponseDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "description": "The access token for the user.",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "The refresh token for the user.",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          }
+        },
+        "required": [
+          "accessToken",
+          "refreshToken"
+        ]
+      },
+      "CreatePatientDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The first name of the patient. Only alphabetic characters are allowed.",
+            "example": "Алексей"
+          },
+          "surname": {
+            "type": "string",
+            "description": "The surname of the patient. Only alphabetic characters are allowed.",
+            "example": "Пухальский"
+          },
+          "patronymic": {
+            "type": "string",
+            "description": "The patronymic of the patient. This field is optional and can include alphabetic characters only.",
+            "example": "Александрович"
+          },
+          "gender": {
+            "type": "string",
+            "description": "The gender of the patient. Must be one of the predefined values in the Gender enum.",
+            "enum": [
+              "Мужской",
+              "Женский"
+            ],
+            "example": "Мужской"
+          },
+          "ageCategory": {
+            "type": "string",
+            "description": "The age category of the patient. Must be one of the predefined values in the AgeCategory enum.",
+            "enum": [
+              "взрослый",
+              "дети"
+            ],
+            "example": "взрослый"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "description": "The date of birth of the patient in ISO 8601 format.",
+            "example": "1990-05-15"
+          }
+        },
+        "required": [
+          "name",
+          "surname",
+          "gender",
+          "ageCategory",
+          "dateOfBirth"
+        ]
+      },
+      "UpdatePatientDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the patient. Must be a valid UUID.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "name": {
+            "type": "string",
+            "description": "The first name of the patient. Only alphabetic characters are allowed.",
+            "example": "Иван"
+          },
+          "surname": {
+            "type": "string",
+            "description": "The surname of the patient. Only alphabetic characters are allowed.",
+            "example": "Иванов"
+          },
+          "patronymic": {
+            "type": "string",
+            "description": "The patronymic of the patient. This field is optional and can include alphabetic characters only.",
+            "example": "Иванович"
+          },
+          "gender": {
+            "type": "string",
+            "description": "The gender of the patient. Must be one of the predefined values in the Gender enum.",
+            "enum": [
+              "Мужской",
+              "Женский"
+            ],
+            "example": "Мужской"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "description": "The date of birth of the patient in ISO 8601 format.",
+            "example": "1990-01-01"
+          },
+          "ageCategory": {
+            "type": "string",
+            "description": "The age category of the patient. Must be one of the predefined values in the AgeCategory enum.",
+            "enum": [
+              "взрослый",
+              "дети"
+            ],
+            "example": "взрослый"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "surname",
+          "gender",
+          "dateOfBirth",
+          "ageCategory"
+        ]
+      },
+      "ChangeActiveDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the entity. Must be a valid UUID.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "PatientDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the patient.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Indicates whether the patient is active.",
+            "example": true
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "description": "The date of birth of the patient in ISO format.",
+            "example": "1985-06-15"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "The full name of the patient.",
+            "example": "Иванов Иван Иванович"
+          }
+        },
+        "required": [
+          "id",
+          "active",
+          "dateOfBirth",
+          "fullName"
+        ]
+      },
+      "PatientsResponseDto": {
+        "type": "object",
+        "properties": {
+          "patients": {
+            "description": "List of patients.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PatientDto"
+            }
+          }
+        },
+        "required": [
+          "patients"
+        ]
+      },
+      "DoctorDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the doctor.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "The full name of the doctor.",
+            "example": "Иванов Иван Иванович"
+          },
+          "typeOfShifts": {
+            "type": "string",
+            "description": "The type of shifts the doctor works.",
+            "enum": [
+              "Первая смена",
+              "Вторая смена",
+              "Полная смена"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "fullName",
+          "typeOfShifts"
+        ]
+      },
+      "OfficeResponseEntityDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the office.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "number": {
+            "type": "number",
+            "description": "The number of the office.",
+            "example": 101
+          },
+          "specialty": {
+            "type": "string",
+            "description": "The specialty of the office.",
+            "enum": [
+              "Общая практика",
+              "Акушерство и гинекология",
+              "Хирургия",
+              "Стоматология",
+              "Терапия",
+              "Офтальмология",
+              "Педиатрия",
+              "Кардиология",
+              "Неврология",
+              "Эндокринология",
+              "Дерматология",
+              "Психиатрия"
+            ]
+          },
+          "doctors": {
+            "description": "List of doctors in the office.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DoctorDto"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the office.",
+            "enum": [
+              "Полный состав",
+              "Один сотрудник",
+              "Нет сотрудников"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "specialty",
+          "doctors",
+          "status"
+        ]
+      },
+      "GetAllOfficeResponseDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "The total number of offices available.",
+            "example": 100
+          },
+          "items": {
+            "description": "List of office entities.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OfficeResponseEntityDto"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "items"
+        ]
+      },
+      "CreateOfficeDto": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "number",
+            "description": "The office number. Must be a positive integer.",
+            "example": 101
+          },
+          "specialty": {
+            "type": "string",
+            "description": "The specialty associated with the office. Must be one of the predefined values in the Specialty enum.",
+            "enum": [
+              "Общая практика",
+              "Акушерство и гинекология",
+              "Хирургия",
+              "Стоматология",
+              "Терапия",
+              "Офтальмология",
+              "Педиатрия",
+              "Кардиология",
+              "Неврология",
+              "Эндокринология",
+              "Дерматология",
+              "Психиатрия"
+            ],
+            "example": "Стоматология"
+          }
+        },
+        "required": [
+          "number",
+          "specialty"
+        ]
+      },
+      "UpdateOfficeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the office. Must be a valid UUID.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "number": {
+            "type": "number",
+            "description": "The office number. Must be a positive integer.",
+            "example": 101
+          },
+          "specialty": {
+            "type": "string",
+            "description": "The specialty associated with the office. Must be one of the predefined values in the Specialty enum.",
+            "enum": [
+              "Общая практика",
+              "Акушерство и гинекология",
+              "Хирургия",
+              "Стоматология",
+              "Терапия",
+              "Офтальмология",
+              "Педиатрия",
+              "Кардиология",
+              "Неврология",
+              "Эндокринология",
+              "Дерматология",
+              "Психиатрия"
+            ],
+            "example": "Стоматология"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "specialty"
+        ]
+      },
+      "Office": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the office.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "number": {
+            "type": "number",
+            "description": "The number of the office.",
+            "example": 101
+          },
+          "specialty": {
+            "type": "string",
+            "description": "The specialty of the office.",
+            "enum": [
+              "Общая практика",
+              "Акушерство и гинекология",
+              "Хирургия",
+              "Стоматология",
+              "Терапия",
+              "Офтальмология",
+              "Педиатрия",
+              "Кардиология",
+              "Неврология",
+              "Эндокринология",
+              "Дерматология",
+              "Психиатрия"
+            ]
+          },
+          "doctors": {
+            "description": "List of doctors associated with the office.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "The current status of the office.",
+            "enum": [
+              "Полный состав",
+              "Один сотрудник",
+              "Нет сотрудников"
+            ],
+            "default": "Нет сотрудников"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "specialty",
+          "doctors",
+          "status"
+        ]
+      },
+      "CreateDoctorDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The first name of the doctor. Only alphabetic characters are allowed.",
+            "example": "Алексей"
+          },
+          "surname": {
+            "type": "string",
+            "description": "The surname of the doctor. Only alphabetic characters are allowed.",
+            "example": "Иванов"
+          },
+          "patronymic": {
+            "type": "string",
+            "description": "The patronymic of the doctor. This field is optional and can include alphabetic characters only.",
+            "example": "Александрович"
+          },
+          "specialty": {
+            "type": "string",
+            "description": "The specialty of the doctor. Must be one of the predefined values in the Specialty enum.",
+            "enum": [
+              "Общая практика",
+              "Акушерство и гинекология",
+              "Хирургия",
+              "Стоматология",
+              "Терапия",
+              "Офтальмология",
+              "Педиатрия",
+              "Кардиология",
+              "Неврология",
+              "Эндокринология",
+              "Дерматология",
+              "Психиатрия"
+            ],
+            "example": "Кардиология"
+          },
+          "typeOfShifts": {
+            "type": "string",
+            "description": "The type of shifts for the doctor. Must be one of the predefined values in the TypesOfShifts enum.",
+            "enum": [
+              "Первая смена",
+              "Вторая смена",
+              "Полная смена"
+            ],
+            "example": "Первая смена"
+          },
+          "officeId": {
+            "type": "string",
+            "description": "The office ID where the doctor works. This field is optional and must be a valid UUID.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address of the doctor. Must be a valid email format and at least 6 characters long.",
+            "example": "doctor@example.com"
+          }
+        },
+        "required": [
+          "name",
+          "surname",
+          "specialty",
+          "typeOfShifts",
+          "email"
+        ]
+      },
+      "DoctorResponseEntityDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the doctor.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "The full name of the doctor.",
+            "example": "Иванов Иван Иванович"
+          },
+          "specialty": {
+            "type": "string",
+            "description": "The specialty of the doctor.",
+            "enum": [
+              "Общая практика",
+              "Акушерство и гинекология",
+              "Хирургия",
+              "Стоматология",
+              "Терапия",
+              "Офтальмология",
+              "Педиатрия",
+              "Кардиология",
+              "Неврология",
+              "Эндокринология",
+              "Дерматология",
+              "Психиатрия"
+            ]
+          },
+          "typeOfShifts": {
+            "type": "string",
+            "description": "The type of shifts the doctor works.",
+            "enum": [
+              "Первая смена",
+              "Вторая смена",
+              "Полная смена"
+            ]
+          },
+          "officeNumber": {
+            "type": "number",
+            "description": "The office number where the doctor works. Can be null if not assigned to an office.",
+            "example": 101,
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "fullName",
+          "specialty",
+          "typeOfShifts",
+          "officeNumber"
+        ]
+      },
+      "GetAllDoctorsResponseDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "The total number of doctors available.",
+            "example": 100
+          },
+          "items": {
+            "description": "List of doctor entities.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DoctorResponseEntityDto"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "items"
+        ]
+      },
+      "DoctorResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the doctor.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "The full name of the doctor.",
+            "example": "Иванов Иван Иванович"
+          },
+          "officeNumber": {
+            "type": "number",
+            "description": "The office number where the doctor works.",
+            "example": 101
+          },
+          "specialty": {
+            "type": "string",
+            "description": "The specialty of the doctor.",
+            "enum": [
+              "Общая практика",
+              "Акушерство и гинекология",
+              "Хирургия",
+              "Стоматология",
+              "Терапия",
+              "Офтальмология",
+              "Педиатрия",
+              "Кардиология",
+              "Неврология",
+              "Эндокринология",
+              "Дерматология",
+              "Психиатрия"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "fullName",
+          "officeNumber",
+          "specialty"
+        ]
+      },
+      "UpdateDoctorDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the doctor. Must be a valid UUID.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "name": {
+            "type": "string",
+            "description": "The first name of the doctor. Only alphabetic characters are allowed.",
+            "example": "Алексей"
+          },
+          "surname": {
+            "type": "string",
+            "description": "The surname of the doctor. Only alphabetic characters are allowed.",
+            "example": "Иванов"
+          },
+          "patronymic": {
+            "type": "string",
+            "description": "The patronymic of the doctor. This field is optional and can include alphabetic characters only.",
+            "example": "Александрович"
+          },
+          "specialty": {
+            "type": "string",
+            "description": "The specialty of the doctor. Must be one of the predefined values in the Specialty enum.",
+            "enum": [
+              "Общая практика",
+              "Акушерство и гинекология",
+              "Хирургия",
+              "Стоматология",
+              "Терапия",
+              "Офтальмология",
+              "Педиатрия",
+              "Кардиология",
+              "Неврология",
+              "Эндокринология",
+              "Дерматология",
+              "Психиатрия"
+            ],
+            "example": "Кардиология"
+          },
+          "typeOfShifts": {
+            "type": "string",
+            "description": "The type of shifts for the doctor. Must be one of the predefined values in the TypesOfShifts enum.",
+            "enum": [
+              "Первая смена",
+              "Вторая смена",
+              "Полная смена"
+            ],
+            "example": "Первая смена"
+          },
+          "officeId": {
+            "type": "string",
+            "description": "The office ID where the doctor works. This field is optional and must be a valid UUID.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address of the doctor. Must be a valid email format and at least 6 characters long.",
+            "example": "doctor@example.com"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "surname",
+          "specialty",
+          "typeOfShifts",
+          "email"
+        ]
+      },
+      "CreateAppointmentDto": {
+        "type": "object",
+        "properties": {
+          "patientId": {
+            "type": "string",
+            "description": "The unique identifier of the patient. Must be a valid UUID.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "doctorId": {
+            "type": "string",
+            "description": "The unique identifier of the doctor. Must be a valid UUID.",
+            "example": "a3f0a3e9-93b0-4a54-8d3e-6d9c3e673c34"
+          },
+          "dateAndTime": {
+            "type": "string",
+            "description": "The date and time of the appointment in ISO 8601 format.",
+            "example": "2024-10-25 14:30"
+          }
+        },
+        "required": [
+          "patientId",
+          "doctorId",
+          "dateAndTime"
+        ]
+      },
+      "AppointmentResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the appointment.",
+            "example": "e5b33c5e-1b9f-4f73-9b5e-9b83e55a9c56"
+          },
+          "dateAndTime": {
+            "type": "string",
+            "description": "The date and time of the appointment in ISO format.",
+            "example": "2024-10-25 14:30"
+          },
+          "patientFullName": {
+            "type": "string",
+            "description": "The full name of the patient.",
+            "example": "Иванов Иван Иванович"
+          },
+          "specialty": {
+            "type": "string",
+            "description": "The specialty of the appointment.",
+            "enum": [
+              "Общая практика",
+              "Акушерство и гинекология",
+              "Хирургия",
+              "Стоматология",
+              "Терапия",
+              "Офтальмология",
+              "Педиатрия",
+              "Кардиология",
+              "Неврология",
+              "Эндокринология",
+              "Дерматология",
+              "Психиатрия"
+            ]
+          },
+          "doctorFullName": {
+            "type": "string",
+            "description": "The full name of the doctor.",
+            "example": "Петров Петр Петрович"
+          },
+          "officeNumber": {
+            "type": "number",
+            "description": "The office number where the appointment takes place. Can be undefined.",
+            "example": 101,
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "dateAndTime",
+          "patientFullName",
+          "specialty",
+          "doctorFullName",
+          "officeNumber"
+        ]
+      },
+      "AppointmentResponseByPatientDto": {
+        "type": "object",
+        "properties": {
+          "upcoming": {
+            "description": "List of upcoming appointments.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppointmentResponseDto"
+            }
+          },
+          "history": {
+            "description": "List of historical appointments.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppointmentResponseDto"
+            }
+          }
+        },
+        "required": [
+          "upcoming",
+          "history"
+        ]
+      }
+    }
+  }
+}
