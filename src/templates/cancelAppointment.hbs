@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation Email</title>
+    <style>
+        body {
+            background-color: #e6e5e6;
+            font-family: Arial, sans-serif;
+            padding: 0;
+            margin: 0;
+        }
+        .content {
+            background-color: #ffffff;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            border-bottom: 1px solid #dcdcdc;
+            padding: 15px 0 15px 20px;
+        }
+        .container {
+            padding: 35px 20px 30px 20px;
+        }
+        .title {
+            color: #ef3124;
+            font-size: 26px;
+            margin: 0;
+        }
+        .greeting {
+            font-weight: 600;
+            font-size: 22px;
+            margin: 0 0 15px 0;
+        }
+        .message {
+            font-size: 16px;
+            font-weight: 400;
+            margin: 0 0 12px 0;
+        }
+        .important {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <header class="header">
+            <h1 class="title">Талон-Онлайн</h1>
+        </header>
+        <div class="container">
+            <h2 class="greeting">Здравствуйте!</h2>
+            <p class="message">
+                Ваша запись на прием для пациента {{patientSurname}} {{patientName}} {{patientPatronymic}} на {{appointmentTime}} была успешно отменена.
+            </p>
+            <p class="message">
+                Врач: {{doctorFullName}}<br/>
+                Отделение: {{doctorSpecialty}}<br/>
+            </p>
+            <p class="message">
+                Если у вас есть вопросы, не стесняйтесь обращаться к нам. Желаем вам хорошего дня! 🌞
+            </p>
+        </div>
+    </div>
+</body>
+</html>

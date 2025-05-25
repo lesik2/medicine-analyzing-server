@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { RolesGuard } from '@/guards/roles.guard';
 import { AppRoles } from '@/decorators/roles-decorator';
@@ -35,6 +44,25 @@ export class AppointmentController {
     return await this.appointmentService.getTimeSlots(query);
   }
 
+  @Delete(':id')
+  @AppRoles([Roles.USER])
+  @ApiOperation({ summary: 'Cancel an appointment' })
+  @ApiResponse({
+    status: 200,
+    description: 'Appointment canceled successfully.',
+    type: Appointment,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Appointment not found.',
+  })
+  async cancelAppointment(
+    @Param('id') id: string,
+    @CurrentUser() user: ExcludeUserPassword,
+  ): Promise<Appointment> {
+    return await this.appointmentService.cancelAppointment(id, user);
+  }
+
   @Get('workload')
   @AppRoles([Roles.MANAGER])
   async getWorkload(@Query() query: getWorkloadQuery) {
@@ -44,7 +72,7 @@ export class AppointmentController {
   @Post()
   @AppRoles([Roles.USER])
   async create(
-    @CurrentUser() user: ExcludeUserPassword, // Get current user
+    @CurrentUser() user: ExcludeUserPassword,
     @Body() createAppointmentDto: CreateAppointmentDto,
   ): Promise<Appointment> {
     return await this.appointmentService.createAppointmentDto(

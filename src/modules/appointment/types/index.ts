@@ -22,3 +22,9 @@ export interface AppointmentResponseByPatient {
   upcoming: AppointmentResponse[];
   history: AppointmentResponse[];
 }
+
+export enum AppointmentStatus {
+  ACTIVE = 'active',
+  CANCELED = 'canceled',
+  COMPLETED = 'completed',
+}

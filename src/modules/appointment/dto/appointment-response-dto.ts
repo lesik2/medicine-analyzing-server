@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Specialty } from '@/types'; // Adjust the path as necessary
+import { AppointmentStatus } from '../types';
 
 export class AppointmentResponseDto {
   @ApiProperty({
@@ -39,4 +40,11 @@ export class AppointmentResponseDto {
     nullable: true,
   })
   officeNumber: number | undefined;
+
+  @ApiProperty({
+    description: 'The current status of the appointment.',
+    enum: AppointmentStatus,
+    example: AppointmentStatus.ACTIVE,
+  })
+  status: AppointmentStatus;
 }

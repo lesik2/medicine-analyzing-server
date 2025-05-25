@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   AppointmentResponseByPatient,
+  AppointmentStatus,
   getTimeSlotsQuery,
   getWorkloadQuery,
 } from './types';
@@ -100,22 +101,29 @@ export class AppointmentService {
         doctorFullName: `${appointment.doctor.surname} ${appointment.doctor.name} ${appointment.doctor.patronymic}`,
         specialty: appointment.doctor.specialty,
         officeNumber: appointment.doctor.office.number,
+        status: appointment.status,
       };
     });
 
-    const futureAppointments = formattedAppointments.filter((appointment) =>
-      moment(
-        appointment.dateAndTime,
-        FULL_DATE_MOMENT_FORMAT,
-        true,
-      ).isSameOrAfter(todayStart),
+    const futureAppointments = formattedAppointments.filter(
+      (appointment) =>
+        moment(
+          appointment.dateAndTime,
+          FULL_DATE_MOMENT_FORMAT,
+          true,
+        ).isSameOrAfter(todayStart) &&
+        appointment.status === AppointmentStatus.ACTIVE,
     );
 
     const previousAppointments = formattedAppointments
-      .filter((appointment) =>
-        moment(appointment.dateAndTime, FULL_DATE_MOMENT_FORMAT, true).isBefore(
-          todayStart,
-        ),
+      .filter(
+        (appointment) =>
+          moment(
+            appointment.dateAndTime,
+            FULL_DATE_MOMENT_FORMAT,
+            true,
+          ).isBefore(todayStart) ||
+          appointment.status === AppointmentStatus.CANCELED,
       )
       .reverse();
 
@@ -252,6 +260,9 @@ export class AppointmentService {
         start: startDate,
         end: endDate,
       })
+      .andWhere('appointment.status = :status', {
+        status: AppointmentStatus.ACTIVE,
+      })
       .getMany();
   }
 
@@ -331,6 +342,7 @@ export class AppointmentService {
       where: {
         doctor: { id: doctorId },
         dateAndTime: Between(startOfDay, endOfDay),
+        status: AppointmentStatus.ACTIVE,
       },
     });
 
@@ -359,5 +371,41 @@ export class AppointmentService {
     }
 
     return availableSlots;
+  }
+
+  async cancelAppointment(
+    id: string,
+    user: ExcludeUserPassword,
+  ): Promise<Appointment> {
+    const appointment = await this.appointmentRepository.findOne({
+      where: { id },
+      relations: ['doctor', 'patient'],
+    });
+
+    if (!appointment) {
+      throw new BadRequestException('Appointment not found');
+    }
+
+    appointment.status = AppointmentStatus.CANCELED;
+    const canceledAppointment =
+      await this.appointmentRepository.save(appointment);
+
+    await this.mailService.sendMail({
+      to: user.email,
+      subject: 'Запись на прием отменена',
+      template: 'cancelAppointment',
+      context: {
+        patientName: appointment.patient.name,
+        patientSurname: appointment.patient.surname,
+        patientPatronymic: appointment.patient.patronymic,
+        appointmentTime: moment(appointment.dateAndTime).format(
+          'D MMMM YYYY HH:mm',
+        ),
+        doctorFullName: `${appointment.doctor.surname} ${appointment.doctor.name} ${appointment.doctor.patronymic}`,
+        doctorSpecialty: appointment.doctor.specialty,
+      },
+    });
+
+    return canceledAppointment;
   }
 }
